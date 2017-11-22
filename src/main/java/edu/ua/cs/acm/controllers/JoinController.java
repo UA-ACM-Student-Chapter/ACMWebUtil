@@ -1,8 +1,10 @@
 package edu.ua.cs.acm.controllers;
 
+import edu.ua.cs.acm.domain.Member;
 import edu.ua.cs.acm.email.JoinEmailMessage;
 import edu.ua.cs.acm.messages.JoinMessage;
 import edu.ua.cs.acm.services.EmailService;
+import edu.ua.cs.acm.services.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -21,15 +23,22 @@ public class JoinController {
 
     private static final Logger LOG = LoggerFactory.getLogger(JoinController.class);
     private final EmailService emailService;
+    private final MemberService memberService;
 
-    public JoinController(EmailService emailService) {
+    public JoinController(EmailService emailService, MemberService memberService) {
         this.emailService = emailService;
+        this.memberService = memberService;
     }
 
     @PostMapping()
     public ResponseEntity joinAcm(@RequestBody JoinMessage message) {
 
         try {
+            Member m = new Member(message.getFirstName(), message.getLastName(), message.getShirtSize(),
+                    message.getBirthday(), message.getEmail());
+
+            memberService.save(m);
+
             emailService.sendMessage(new JoinEmailMessage(message.getFirstName(), message.getLastName(),
                     message.getEmail(), message.wantsSlackToJoinSlack()));
         } catch (Exception ex) {
