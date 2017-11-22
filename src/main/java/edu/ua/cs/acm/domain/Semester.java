@@ -1,10 +1,13 @@
 package edu.ua.cs.acm.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import edu.ua.cs.acm.converters.LocalDateTimeConverter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name="Semester")
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Semester implements Serializable {
 
     @Id
@@ -25,15 +29,17 @@ public class Semester implements Serializable {
 
 
     @Column(name="start_date")
-    private Date startDate;
+    @Convert(converter = LocalDateTimeConverter.class)
+    private LocalDateTime startDate;
 
     @Column(name="end_date")
-    private Date endDate;
+    @Convert(converter = LocalDateTimeConverter.class)
+    private LocalDateTime endDate;
 
     @ManyToMany(mappedBy = "semesters")
     private Set<Member> members = new HashSet<>();
 
-    public Semester(Date startDate, Date endDate) {
+    public Semester(LocalDateTime startDate, LocalDateTime endDate) {
         this.startDate = startDate;
         this.endDate = endDate;
     }
@@ -42,19 +48,19 @@ public class Semester implements Serializable {
         return id;
     }
 
-    public Date getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
@@ -66,7 +72,5 @@ public class Semester implements Serializable {
     public void setMembers(Set<Member> members) {
         this.members = members;
     }
-
-
 
 }

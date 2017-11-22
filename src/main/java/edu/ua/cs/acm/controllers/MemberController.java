@@ -33,10 +33,10 @@ public class MemberController {
     @GetMapping()
     public ResponseEntity<Member> getMember() {
         Member m = new Member("Jake", "Zarobsky", "L",
-                new Date(2017, 05, 07), "jazarobsky@crimson.ua.edu");
+                LocalDateTime.of(1996, 7, 5, 0, 0), "jazarobsky@crimson.ua.edu");
 
-        Semester s = new Semester(new Date(2017, 8, 1),
-                new Date(2017, 12, 31));
+        Semester s = new Semester(LocalDateTime.of(2017, 8, 1, 0,0),
+                LocalDateTime.of(2017, 12, 31, 23, 59));
 
         semesterRepository.save(s);
 

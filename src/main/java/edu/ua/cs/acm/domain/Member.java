@@ -2,6 +2,7 @@ package edu.ua.cs.acm.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import edu.ua.cs.acm.converters.LocalDateTimeConverter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -34,7 +35,8 @@ public class Member implements Serializable {
     private String shirtSize;
 
     @Column(name="birthday")
-    private Date birthday;
+    @Convert(converter = LocalDateTimeConverter.class)
+    private LocalDateTime birthday;
 
     @Column(name="crimson_email")
     private String crimsonEmail;
@@ -57,7 +59,7 @@ public class Member implements Serializable {
 
     }
 
-    public Member(String firstName, String lastName, String shirtSize, Date birthday, String crimsonEmail) {
+    public Member(String firstName, String lastName, String shirtSize, LocalDateTime birthday, String crimsonEmail) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.shirtSize = shirtSize;
@@ -93,11 +95,11 @@ public class Member implements Serializable {
         this.shirtSize = shirtSize;
     }
 
-    public Date getBirthday() {
+    public LocalDateTime getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDateTime birthday) {
         this.birthday = birthday;
     }
 
