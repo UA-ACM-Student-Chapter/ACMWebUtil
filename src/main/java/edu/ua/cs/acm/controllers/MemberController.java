@@ -4,6 +4,8 @@ import edu.ua.cs.acm.domain.Member;
 import edu.ua.cs.acm.domain.Semester;
 import edu.ua.cs.acm.repositories.MemberRepository;
 import edu.ua.cs.acm.repositories.SemesterRepository;
+import edu.ua.cs.acm.services.MemberService;
+import edu.ua.cs.acm.services.SemesterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +23,13 @@ import java.util.Date;
 @RequestMapping("/member")
 public class MemberController {
 
-    private final MemberRepository memberRepository;
-    private final SemesterRepository semesterRepository;
+    private final MemberService memberService;
+    private final SemesterService semesterService;
 
     @Autowired
-    public MemberController(MemberRepository memberRepository, SemesterRepository semesterRepository) {
-        this.memberRepository = memberRepository;
-        this.semesterRepository = semesterRepository;
+    public MemberController(MemberService memberService, SemesterService semesterService) {
+        this.memberService = memberService;
+        this.semesterService = semesterService;
     }
 
     @GetMapping()
@@ -38,16 +40,20 @@ public class MemberController {
         Semester s = new Semester(LocalDateTime.of(2017, 8, 1, 0,0),
                 LocalDateTime.of(2017, 12, 31, 23, 59));
 
-        semesterRepository.save(s);
+        try {
+            semesterService.saveSemester(s);
 
-        m.getSemesters().add(s);
+            m.getSemesters().add(s);
 
 
-        m = memberRepository.save(m);
+            m = memberService.save(m);
 
-        s.getMembers().add(m);
+            s.getMembers().add(m);
 
-        semesterRepository.save(s);
+            semesterService.saveSemester(s);
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().build();
+        }
 
         return new ResponseEntity<Member>(m, HttpStatus.OK);
     }

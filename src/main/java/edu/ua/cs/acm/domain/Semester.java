@@ -8,7 +8,6 @@ import edu.ua.cs.acm.converters.LocalDateTimeConverter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,6 +38,9 @@ public class Semester implements Serializable {
     @ManyToMany(mappedBy = "semesters")
     private Set<Member> members = new HashSet<>();
 
+    protected Semester() {
+    }
+
     public Semester(LocalDateTime startDate, LocalDateTime endDate) {
         this.startDate = startDate;
         this.endDate = endDate;
@@ -46,6 +48,10 @@ public class Semester implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public LocalDateTime getStartDate() {
