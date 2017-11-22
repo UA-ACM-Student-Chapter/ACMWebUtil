@@ -1,10 +1,14 @@
 package edu.ua.cs.acm.services.impl;
 
 import edu.ua.cs.acm.domain.Member;
+import edu.ua.cs.acm.domain.Semester;
 import edu.ua.cs.acm.repositories.MemberRepository;
 import edu.ua.cs.acm.services.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by jzarobsky on 11/21/17.
@@ -38,4 +42,17 @@ public class MemberServiceImpl implements MemberService {
     public void delete(Member member) {
         memberRepository.delete(member);
     }
+
+    @Override
+    public List<Member> unpaidMembers(Semester semester) {
+        return memberRepository.unpaidForSemester(semester.getId());
+    }
+
+    // Scheduled for every Sunday @ 5pm
+    @Scheduled(cron = "0 17 * * 0")
+    public void sendOutInvoicesReminders() {
+        // Note: this may or may not work with heroku depending on if the dyno is asleep.
+
+    }
+
 }
