@@ -2,6 +2,10 @@ package edu.ua.cs.acm.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import edu.ua.cs.acm.converters.LocalDateTimeConverter;
 
 import javax.persistence.*;
@@ -36,6 +40,8 @@ public class Member implements Serializable {
 
     @Column(name="birthday")
     @Convert(converter = LocalDateTimeConverter.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime birthday;
 
     @Column(name="crimson_email")

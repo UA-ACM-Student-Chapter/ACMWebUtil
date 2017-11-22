@@ -1,13 +1,20 @@
 package edu.ua.cs.acm.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import edu.ua.cs.acm.converters.LocalDateTimeConverter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,10 +35,14 @@ public class Semester implements Serializable {
 
 
     @Column(name="start_date")
+    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime startDate;
 
     @Column(name="end_date")
+    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime endDate;
 

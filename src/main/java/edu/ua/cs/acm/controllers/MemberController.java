@@ -37,8 +37,7 @@ public class MemberController {
         Member m = new Member("Jake", "Zarobsky", "L",
                 LocalDateTime.of(1996, 7, 5, 0, 0), "jazarobsky@crimson.ua.edu");
 
-        Semester s = new Semester(LocalDateTime.of(2017, 8, 1, 0,0),
-                LocalDateTime.of(2017, 12, 31, 23, 59));
+        Semester s = semesterService.getCurrentSemester();
 
         try {
             semesterService.saveSemester(s);
