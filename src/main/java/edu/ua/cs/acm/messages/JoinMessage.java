@@ -1,5 +1,12 @@
 package edu.ua.cs.acm.messages;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+
+import java.time.LocalDateTime;
+
 /**
  * Created by jzarobsky on 9/4/17.
  */
@@ -8,6 +15,11 @@ public class JoinMessage {
     private String lastName;
     private String email;
     private String slack;
+    private String shirtSize;
+
+    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime birthday;
 
     public String getFirstName() {
         return firstName;
@@ -43,5 +55,21 @@ public class JoinMessage {
 
     public boolean wantsSlackToJoinSlack() {
         return slack.toLowerCase().equals("yes");
+    }
+
+    public String getShirtSize() {
+        return shirtSize;
+    }
+
+    public void setShirtSize(String shirtSize) {
+        this.shirtSize = shirtSize;
+    }
+
+    public LocalDateTime getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(LocalDateTime birthday) {
+        this.birthday = birthday;
     }
 }
