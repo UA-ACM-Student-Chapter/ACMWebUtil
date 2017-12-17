@@ -1,6 +1,5 @@
 package edu.ua.cs.acm.services.impl;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import edu.ua.cs.acm.domain.Semester;
 import edu.ua.cs.acm.repositories.SemesterRepository;
 import edu.ua.cs.acm.services.SemesterService;
