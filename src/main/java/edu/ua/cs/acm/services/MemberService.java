@@ -15,4 +15,5 @@ public interface MemberService {
     void delete(Member member);
 
     List<Member> unpaidMembers(Semester semester);
+    List<Member> allMembers();
 }

@@ -45,4 +45,16 @@ public class MemberController {
         return ResponseEntity.ok(memberService.unpaidMembers(semesterService.getCurrentSemester()));
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<Member>> allMembers() {
+        return ResponseEntity.ok(memberService.allMembers());
+    }
+
+    @PostMapping("/makepayment")
+    public ResponseEntity payment() {
+        System.out.println("Got a payment request " + System.currentTimeMillis());
+        //TODO Something useful
+        return ResponseEntity.ok().build();
+    }
+
 }

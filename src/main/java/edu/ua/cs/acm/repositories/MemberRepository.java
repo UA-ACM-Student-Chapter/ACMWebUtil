@@ -13,4 +13,6 @@ public interface MemberRepository extends CrudRepository <Member, Integer> {
     Member findByCrimsonEmail(String emailAddress);
     @Query(value = "SELECT * FROM Member WHERE member_id NOT IN (SELECT member_id FROM MemberSemesterLink WHERE semester_id = ?1)", nativeQuery = true)
     List<Member> unpaidForSemester(int semesterId);
+    @Query(value = "SELECT * FROM Member", nativeQuery = true)
+    List <Member> allMembers();
 }

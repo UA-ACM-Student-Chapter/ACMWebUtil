@@ -48,6 +48,11 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.unpaidForSemester(semester.getId());
     }
 
+    @Override
+    public List<Member> allMembers() {
+        return memberRepository.allMembers();
+    }
+
     // Scheduled for every Sunday @ 5pm
     @Scheduled(cron = "0 17 * * 0")
     public void sendOutInvoicesReminders() {
