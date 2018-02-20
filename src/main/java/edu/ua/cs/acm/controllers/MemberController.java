@@ -2,6 +2,7 @@ package edu.ua.cs.acm.controllers;
 
 import edu.ua.cs.acm.domain.Member;
 import edu.ua.cs.acm.domain.Semester;
+import edu.ua.cs.acm.messages.UpdateShirtSizeMessage;
 import edu.ua.cs.acm.services.MemberService;
 import edu.ua.cs.acm.services.SemesterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,17 @@ public class MemberController {
     public ResponseEntity payment() {
         System.out.println("Got a payment request " + System.currentTimeMillis());
         //TODO Something useful
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/updateshirtsize")
+    public ResponseEntity updateShirtSize(@RequestBody UpdateShirtSizeMessage message) {
+        Member memberToUpdate = memberService.getByCrimsonEmail(message.getEmail());
+
+        if (memberToUpdate != null) {
+            memberService.updateShirtSize(memberToUpdate, message.getNewShirtSize());
+        }
+
         return ResponseEntity.ok().build();
     }
 

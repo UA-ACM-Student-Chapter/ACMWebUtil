@@ -16,4 +16,6 @@ public interface MemberService {
 
     List<Member> unpaidMembers(Semester semester);
     List<Member> allMembers();
+
+    Integer updateShirtSize(Member memberToUpdate, String newShirtSize);
 }
