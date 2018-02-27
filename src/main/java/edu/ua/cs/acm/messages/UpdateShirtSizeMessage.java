@@ -10,7 +10,7 @@ public class UpdateShirtSizeMessage {
     private String email;
     private String newShirtSize;
 
-    @JsonSerialize(using = ToStringSerializer.class)
+    // @JsonSerialize(using = ToStringSerializer.class)
 
     public String getEmail() {
         return email;
