@@ -62,7 +62,7 @@ public class MemberController {
     }
 
     @PostMapping("/updateshirtsize")
-    public ResponseEntity<Object> updateShirtSize(UpdateShirtSizeMessage message) throws URISyntaxException {
+    public ResponseEntity<Object> updateShirtSize(@RequestBody UpdateShirtSizeMessage message) throws URISyntaxException {
         Member memberToUpdate = memberService.getByCrimsonEmail(message.getEmail());
 
         if (memberToUpdate != null) {
