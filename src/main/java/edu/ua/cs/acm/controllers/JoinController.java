@@ -9,10 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by jzarobsky on 9/4/17.
@@ -39,8 +36,8 @@ public class JoinController {
 
             memberService.save(m);
 
-            emailService.sendMessage(new JoinEmailMessage(message.getFirstName(), message.getLastName(),
-                    message.getEmail(), message.wantsSlackToJoinSlack()));
+            //emailService.sendMessage(new JoinEmailMessage(message.getFirstName(), message.getLastName(),
+                    //message.getEmail(), message.wantsSlackToJoinSlack()));
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -48,4 +45,5 @@ public class JoinController {
 
         return ResponseEntity.ok().build();
     }
+
 }

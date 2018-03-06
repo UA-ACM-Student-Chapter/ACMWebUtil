@@ -3,6 +3,7 @@ package edu.ua.cs.acm.controllers;
 import edu.ua.cs.acm.domain.Member;
 import edu.ua.cs.acm.domain.Semester;
 import edu.ua.cs.acm.messages.UpdateShirtSizeMessage;
+import edu.ua.cs.acm.messages.PayForSemesterMessage;
 import edu.ua.cs.acm.services.MemberService;
 import edu.ua.cs.acm.services.SemesterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,34 @@ public class MemberController {
 
         if (memberToUpdate != null) {
             memberService.updateShirtSize(memberToUpdate, message.getNewShirtSize());
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/ispaid")
+    public ResponseEntity memberIsPaid(@RequestBody @RequestParam("email") String email) {
+        Member m = memberService.getByCrimsonEmail(email);
+        int paid = -1;
+
+        if (m != null) {
+            paid = semesterService.memberIsPaid(m);
+        }
+
+        if (m.getId() == paid) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+        }
+    }
+
+    @PostMapping("/payforsemester")
+    public ResponseEntity payForSemester(@RequestBody PayForSemesterMessage message) {
+        Member payingMember = memberService.getByCrimsonEmail(message.getEmail());
+        int semesterId = semesterService.currentSemesterId();
+
+        if (payingMember != null) {
+            memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
         }
 
         return ResponseEntity.ok().build();

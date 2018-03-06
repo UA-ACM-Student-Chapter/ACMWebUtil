@@ -1,13 +1,18 @@
 package edu.ua.cs.acm.services.impl;
 
 import edu.ua.cs.acm.domain.Member;
+import edu.ua.cs.acm.domain.MemberSemesterLink;
 import edu.ua.cs.acm.domain.Semester;
 import edu.ua.cs.acm.repositories.MemberRepository;
+import edu.ua.cs.acm.repositories.MemberSemesterLinkRepository;
+import edu.ua.cs.acm.repositories.SemesterRepository;
 import edu.ua.cs.acm.services.MemberService;
+import edu.ua.cs.acm.services.SemesterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 /**
@@ -17,10 +22,12 @@ import java.util.List;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final MemberSemesterLinkRepository mslRepository;
 
     @Autowired
-    public MemberServiceImpl(MemberRepository memberRepository) {
+    public MemberServiceImpl(MemberRepository memberRepository, MemberSemesterLinkRepository mslRepository) {
         this.memberRepository = memberRepository;
+        this.mslRepository = mslRepository;
     }
 
     @Override
@@ -57,6 +64,23 @@ public class MemberServiceImpl implements MemberService {
     public Integer updateShirtSize(Member memberToUpdate, String newShirtSize) {
         int memberId = memberToUpdate.getId();
         return memberRepository.updateShirtSize(memberId, newShirtSize);
+    }
+
+    @Override
+    public Integer payForSemester(Member payingMember, int semesterId, String purchaseID) {
+        int memberId = payingMember.getId();
+
+        //Check if purchaseID is valid
+        Boolean valid = true;
+
+        if (valid) {
+            MemberSemesterLink msl = new MemberSemesterLink(memberId, semesterId);
+            mslRepository.save(msl);
+        } else {
+            return -1;
+        }
+
+        return 0;
     }
 
     // Scheduled for every Sunday @ 5pm
