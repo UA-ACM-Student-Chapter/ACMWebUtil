@@ -108,6 +108,8 @@ public class MemberController {
             System.out.println("here!!");
             int semesterId = semesterService.currentSemesterId();
             System.out.println(semesterId);
+            System.out.println(message.getEmail());
+            System.out.println(payingMember);
 
             if (payingMember != null) {
                 memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
