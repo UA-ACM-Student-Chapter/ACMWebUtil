@@ -40,6 +40,11 @@ public class SemesterServiceImpl implements SemesterService {
     }
 
     @Override
+    public LocalDateTime currentDueDate() {
+        return this.semesterRepository.currentDueDate();
+    }
+
+    @Override
     public int currentSemesterId() {
         return this.semesterRepository.currentSemesterId();
     }
