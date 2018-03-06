@@ -101,18 +101,12 @@ public class MemberController {
     public ResponseEntity payForSemester(@RequestBody PayForSemesterMessage message) {
         Member payingMember = memberService.getByCrimsonEmail(message.getEmail());
         int semesterId = semesterService.currentSemesterId();
-        
-        Integer success = -1;
 
         if (payingMember != null) {
-            success = memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
+            memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
         }
 
-        if (success == 0) {
-            return ResponseEntity.ok("success");
-        } else {
-            return ResponseEntity.ok("failed");
-        }
+        return ResponseEntity.ok("success");
     }
 
 }

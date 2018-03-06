@@ -70,15 +70,8 @@ public class MemberServiceImpl implements MemberService {
     public Integer payForSemester(Member payingMember, int semesterId, String purchaseID) {
         int memberId = payingMember.getId();
 
-        //Check if purchaseID is valid
-        Boolean valid = true;
-
-        if (valid) {
-            MemberSemesterLink msl = new MemberSemesterLink(memberId, semesterId);
-            mslRepository.save(msl);
-        } else {
-            return -1;
-        }
+        MemberSemesterLink msl = new MemberSemesterLink(memberId, semesterId);
+        mslRepository.save(msl);
 
         return 0;
     }
