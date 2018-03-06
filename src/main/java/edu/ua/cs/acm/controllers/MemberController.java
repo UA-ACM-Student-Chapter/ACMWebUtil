@@ -87,13 +87,13 @@ public class MemberController {
         if (m != null) {
             paidMember = semesterService.memberIsPaid(m);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.ok("member not found");
         }
 
         if (m.getId() == paidMember) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("paid");
         } else {
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+            return ResponseEntity.ok("not paid");
         }
     }
 
@@ -101,12 +101,18 @@ public class MemberController {
     public ResponseEntity payForSemester(@RequestBody PayForSemesterMessage message) {
         Member payingMember = memberService.getByCrimsonEmail(message.getEmail());
         int semesterId = semesterService.currentSemesterId();
+        
+        Integer success = -1;
 
         if (payingMember != null) {
-            memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
+            success = memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
         }
 
-        return ResponseEntity.ok().build();
+        if (success == 0) {
+            return ResponseEntity.ok("success");
+        } else {
+            return ResponseEntity.ok("failed");
+        }
     }
 
 }
