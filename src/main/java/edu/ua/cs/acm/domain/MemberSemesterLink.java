@@ -25,6 +25,7 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MemberSemesterLink implements Serializable{
 
+    @Id
     @Column(name="member_id")
     private int member_id;
 

@@ -2,6 +2,7 @@ package edu.ua.cs.acm.controllers;
 
 import edu.ua.cs.acm.domain.Member;
 import edu.ua.cs.acm.domain.Semester;
+import edu.ua.cs.acm.messages.IsPaidMessage;
 import edu.ua.cs.acm.messages.UpdateShirtSizeMessage;
 import edu.ua.cs.acm.messages.PayForSemesterMessage;
 import edu.ua.cs.acm.services.MemberService;
@@ -79,15 +80,17 @@ public class MemberController {
     }
 
     @PostMapping("/ispaid")
-    public ResponseEntity memberIsPaid(@RequestBody @RequestParam("email") String email) {
-        Member m = memberService.getByCrimsonEmail(email);
-        int paid = -1;
+    public ResponseEntity memberIsPaid(@RequestBody IsPaidMessage message) {
+        Member m = memberService.getByCrimsonEmail(message.getEmail());
+        int paidMember = -1;
 
         if (m != null) {
-            paid = semesterService.memberIsPaid(m);
+            paidMember = semesterService.memberIsPaid(m);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        if (m.getId() == paid) {
+        if (m.getId() == paidMember) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
