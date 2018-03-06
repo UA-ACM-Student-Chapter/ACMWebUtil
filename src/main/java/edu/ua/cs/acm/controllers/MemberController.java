@@ -8,11 +8,10 @@ import edu.ua.cs.acm.messages.PayForSemesterMessage;
 import edu.ua.cs.acm.services.MemberService;
 import edu.ua.cs.acm.services.SemesterService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -57,13 +56,6 @@ public class MemberController {
         return ResponseEntity.ok(memberService.allMembers());
     }
 
-    @PostMapping("/makepayment")
-    public ResponseEntity payment() {
-        System.out.println("Got a payment request " + System.currentTimeMillis());
-        //TODO Something useful
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/updateshirtsize")
     public ResponseEntity<Object> updateShirtSize(@RequestBody UpdateShirtSizeMessage message) throws URISyntaxException {
         Member memberToUpdate = memberService.getByCrimsonEmail(message.getEmail());
@@ -87,26 +79,41 @@ public class MemberController {
         if (m != null) {
             paidMember = semesterService.memberIsPaid(m);
         } else {
-            return ResponseEntity.ok("member not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         if (m.getId() == paidMember) {
-            return ResponseEntity.ok("paid");
+            return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.ok("not paid");
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
         }
     }
 
     @PostMapping("/payforsemester")
     public ResponseEntity payForSemester(@RequestBody PayForSemesterMessage message) {
-        Member payingMember = memberService.getByCrimsonEmail(message.getEmail());
-        int semesterId = semesterService.currentSemesterId();
 
-        if (payingMember != null) {
-            memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
+        RestTemplate restTemplate = new RestTemplate();
+
+        String url = "https://ua-acm-web-payments.herokuapp.com/validate";
+        String requestJson = "{\"id\":\"" + message.getPurchaseID() + "\"}";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<String>(requestJson,headers);
+        String response = restTemplate.postForObject(url, entity, String.class);
+
+        if (response.equals("yes")) {
+
+            Member payingMember = memberService.getByCrimsonEmail(message.getEmail());
+            int semesterId = semesterService.currentSemesterId();
+
+            if (payingMember != null) {
+                memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
+            }
+
+            return ResponseEntity.ok().build();
         }
-
-        return ResponseEntity.ok("success");
+        else return ResponseEntity.ok("could not validate transaction");
     }
 
 }
