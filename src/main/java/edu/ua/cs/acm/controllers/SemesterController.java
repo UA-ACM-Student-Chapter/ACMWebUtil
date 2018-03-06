@@ -87,7 +87,7 @@ public class SemesterController {
         return new HttpEntity("nothing sent; past due date");
     }
 
-    @RequestMapping("/unpaiddetails")
+    @GetMapping("/unpaiddetails")
     public Map<String, Object> unpaidDetails() {
         HashMap<String, Object> response = new HashMap<>();
         response.put("dueDate", semesterService.currentDueDate());
