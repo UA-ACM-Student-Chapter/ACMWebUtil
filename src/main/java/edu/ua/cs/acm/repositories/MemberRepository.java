@@ -12,7 +12,7 @@ import java.util.List;
  * Created by jzarobsky on 11/21/17.
  */
 public interface MemberRepository extends CrudRepository <Member, Integer> {
-    @Query(value = "SELECT * FROM Member WHERE crimson_email = ?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM Member WHERE crimson_email = ?1 LIMIT 1", nativeQuery = true)
     Member findByCrimsonEmail(String emailAddress);
 
     @Query(value = "SELECT * FROM Member WHERE member_id NOT IN (SELECT member_id FROM MemberSemesterLink WHERE semester_id = ?1)", nativeQuery = true)

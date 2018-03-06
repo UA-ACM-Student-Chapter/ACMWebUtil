@@ -1,5 +1,6 @@
 package edu.ua.cs.acm.services.impl;
 
+import edu.ua.cs.acm.domain.Member;
 import edu.ua.cs.acm.domain.Semester;
 import edu.ua.cs.acm.repositories.SemesterRepository;
 import edu.ua.cs.acm.services.SemesterService;
@@ -36,6 +37,19 @@ public class SemesterServiceImpl implements SemesterService {
     @Override
     public Semester getCurrentSemester() {
         return this.semesterRepository.findByStartDateBeforeAndEndDateAfter(LocalDateTime.now(), LocalDateTime.now());
+    }
+
+    @Override
+    public int currentSemesterId() {
+        return this.semesterRepository.currentSemesterId();
+    }
+
+    @Override
+    public int memberIsPaid(Member m) {
+        Integer memberID = m.getId();
+        Integer semesterID = semesterRepository.currentSemesterId();
+
+        return semesterRepository.isPaid(memberID, semesterID);
     }
 
     @Override
