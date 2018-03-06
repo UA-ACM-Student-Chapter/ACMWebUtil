@@ -105,9 +105,9 @@ public class MemberController {
         if (response.equals("yes")) {
 
             Member payingMember = memberService.getByCrimsonEmail(message.getEmail());
-            console.log("here!!");
+            System.out.println("here!!");
             int semesterId = semesterService.currentSemesterId();
-            console.log(semesterId);
+            System.out.println(semesterId);
 
             if (payingMember != null) {
                 memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
