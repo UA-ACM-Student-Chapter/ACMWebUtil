@@ -4,6 +4,7 @@ import edu.ua.cs.acm.domain.Semester;
 import edu.ua.cs.acm.domain.Member;
 import edu.ua.cs.acm.services.SemesterService;
 import edu.ua.cs.acm.services.MemberService;
+import org.omg.CORBA.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -72,18 +73,21 @@ public class SemesterController {
     }
 
     @RequestMapping(value = "/scheduledreminder", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public HttpEntity scheduledReminder(@RequestParam Integer scheduled_day) {
+    public HttpEntity scheduledReminder(@RequestParam Integer scheduled_day, @RequestParam String secret_key) {
         System.out.println("got a schedule request");
-        Calendar c = Calendar.getInstance();
-        Integer dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-        if (scheduled_day == dayOfWeek && LocalDateTime.now().isBefore(semesterService.currentDueDate())) {
-            List<Member> unpaidMembers = memberService.unpaidMembers(semesterService.getCurrentSemester());
-            String response = "Going to send an email to:";
-            for (Member m: unpaidMembers) {
-                response += " " + m.getCrimsonEmail();
+        if (secret_key.equals(System.getenv().get("SECRET_KEY"))) {
+            Calendar c = Calendar.getInstance();
+            Integer dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+            if (scheduled_day == dayOfWeek && LocalDateTime.now().isBefore(semesterService.currentDueDate())) {
+                List<Member> unpaidMembers = memberService.unpaidMembers(semesterService.getCurrentSemester());
+                String response = "Going to send an email to:";
+                for (Member m: unpaidMembers) {
+                    response += " " + m.getCrimsonEmail();
+                }
+                return new HttpEntity(response);
             }
-            return new HttpEntity(response);
         }
+
         return new HttpEntity("nothing sent; past due date");
     }
 
