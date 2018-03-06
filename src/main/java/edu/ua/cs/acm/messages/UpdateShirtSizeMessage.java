@@ -3,9 +3,7 @@ package edu.ua.cs.acm.messages;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
-/**
- * Created by Jared Cleghorn on 2/19/18.
- */
+/* Created by Jared Cleghorn on 2/19/18. */
 public class UpdateShirtSizeMessage {
     private String email;
     private String newShirtSize;

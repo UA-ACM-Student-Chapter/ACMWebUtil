@@ -7,10 +7,14 @@ import edu.ua.cs.acm.messages.PayForSemesterMessage;
 import edu.ua.cs.acm.services.MemberService;
 import edu.ua.cs.acm.services.SemesterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpHeaders;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -60,14 +64,18 @@ public class MemberController {
     }
 
     @PostMapping("/updateshirtsize")
-    public ResponseEntity updateShirtSize(@RequestBody UpdateShirtSizeMessage message) {
+    public ResponseEntity<Object> updateShirtSize(@RequestBody UpdateShirtSizeMessage message) throws URISyntaxException {
         Member memberToUpdate = memberService.getByCrimsonEmail(message.getEmail());
 
         if (memberToUpdate != null) {
             memberService.updateShirtSize(memberToUpdate, message.getNewShirtSize());
         }
 
-        return ResponseEntity.ok().build();
+        // redirect the user to a success page
+        URI success = new URI("http://www.UA-ACM-Student-Chapter.github.io/update-shirt-size/success.html");
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(success);
+        return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
     }
 
     @PostMapping("/ispaid")
