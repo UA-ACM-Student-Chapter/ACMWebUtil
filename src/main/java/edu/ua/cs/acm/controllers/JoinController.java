@@ -36,8 +36,8 @@ public class JoinController {
 
             memberService.save(m);
 
-            //emailService.sendMessage(new JoinEmailMessage(message.getFirstName(), message.getLastName(),
-                    //message.getEmail(), message.wantsSlackToJoinSlack()));
+            emailService.sendMessage(new JoinEmailMessage(message.getFirstName(), message.getLastName(),
+                    message.getEmail(), message.wantsSlackToJoinSlack()));
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
