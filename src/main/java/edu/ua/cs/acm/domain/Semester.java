@@ -46,6 +46,12 @@ public class Semester implements Serializable {
     @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime endDate;
 
+    @Column(name="due_date")
+    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @Convert(converter = LocalDateTimeConverter.class)
+    private LocalDateTime dueDate;
+
     @ManyToMany(mappedBy = "semesters")
     private Set<Member> members = new HashSet<>();
 

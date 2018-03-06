@@ -1,12 +1,22 @@
 package edu.ua.cs.acm.controllers;
 
 import edu.ua.cs.acm.domain.Semester;
+import edu.ua.cs.acm.domain.Member;
 import edu.ua.cs.acm.services.SemesterService;
+import edu.ua.cs.acm.services.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.*;
+
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
+import java.util.Calendar;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Created by jzarobsky on 11/21/17.
@@ -16,11 +26,13 @@ import org.springframework.web.bind.annotation.*;
 public class SemesterController {
 
     private final SemesterService semesterService;
+    private final MemberService memberService;
     private final String authKey;
 
     @Autowired
-    public SemesterController(SemesterService semesterService, @Value("${authorization-key}") String authKey) {
+    public SemesterController(SemesterService semesterService, MemberService memberService, @Value("${authorization-key}") String authKey) {
         this.semesterService = semesterService;
+        this.memberService = memberService;
         this.authKey = authKey;
     }
 
@@ -57,6 +69,30 @@ public class SemesterController {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(semester);
+    }
+
+    @RequestMapping(value = "/scheduledreminder", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public HttpEntity scheduledReminder(@RequestParam Integer scheduled_day) {
+        System.out.println("got a schedule request");
+        Calendar c = Calendar.getInstance();
+        Integer dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        if (scheduled_day == dayOfWeek && LocalDateTime.now().isBefore(semesterService.currentDueDate())) {
+            List<Member> unpaidMembers = memberService.unpaidMembers(semesterService.getCurrentSemester());
+            String response = "Going to send an email to:";
+            for (Member m: unpaidMembers) {
+                response += " " + m.getCrimsonEmail();
+            }
+            return new HttpEntity(response);
+        }
+        return new HttpEntity("nothing sent; past due date");
+    }
+
+    @RequestMapping("/unpaiddetails")
+    public Map<String, Object> unpaidDetails() {
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("dueDate", semesterService.currentDueDate());
+        response.put("unpaidMembers", memberService.unpaidMembers(semesterService.getCurrentSemester()));
+        return response;
     }
 
 }
