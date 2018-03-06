@@ -95,7 +95,7 @@ public class MemberController {
         RestTemplate restTemplate = new RestTemplate();
 
         String url = "https://ua-acm-web-payments.herokuapp.com/validate";
-        String requestJson = "{\"id\":\"" + message.getPurchaseID() + "\"}";
+        String requestJson = "{\"id\":\"" + message.getPurchaseID() + "\", \"email\":\"" + message.getEmail() + "\"}";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -109,6 +109,7 @@ public class MemberController {
 
             if (payingMember != null) {
                 memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
+                memberService.updateShirtSize(payingMember, message.getSize());
             }
 
             return ResponseEntity.ok("success");

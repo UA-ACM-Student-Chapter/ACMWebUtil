@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class PayForSemesterMessage {
     private String email;
     private String purchaseID;
+    private String size;
 
     @JsonSerialize(using = ToStringSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -25,6 +26,10 @@ public class PayForSemesterMessage {
     public String getPurchaseID() { return this.purchaseID; }
 
     public void setPurchaseID(String purchaseID) { this.purchaseID = purchaseID; }
+
+    public String getSize() { return  this.size; }
+
+    public void setSize(String size) { this.size = size; }
 
     public LocalDateTime getDatePaid() { return this.datePaid; }
 
