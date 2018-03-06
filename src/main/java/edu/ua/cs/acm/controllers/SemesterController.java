@@ -1,6 +1,5 @@
 package edu.ua.cs.acm.controllers;
 
-import com.sun.org.apache.regexp.internal.RE;
 import edu.ua.cs.acm.domain.Semester;
 import edu.ua.cs.acm.services.SemesterService;
 import org.springframework.beans.factory.annotation.Autowired;
