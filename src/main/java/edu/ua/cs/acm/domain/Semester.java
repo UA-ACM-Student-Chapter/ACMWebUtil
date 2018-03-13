@@ -58,9 +58,10 @@ public class Semester implements Serializable {
     protected Semester() {
     }
 
-    public Semester(LocalDateTime startDate, LocalDateTime endDate) {
+    public Semester(LocalDateTime startDate, LocalDateTime endDate, LocalDateTime dueDate) {
         this.startDate = startDate;
         this.endDate = endDate;
+        this.dueDate = dueDate;
     }
 
     public int getId() {

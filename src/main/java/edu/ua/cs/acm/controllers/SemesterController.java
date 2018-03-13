@@ -2,6 +2,9 @@ package edu.ua.cs.acm.controllers;
 
 import edu.ua.cs.acm.domain.Semester;
 import edu.ua.cs.acm.domain.Member;
+import edu.ua.cs.acm.email.DueReminderEmailMessage;
+import edu.ua.cs.acm.messages.AddSemesterMessage;
+import edu.ua.cs.acm.services.EmailService;
 import edu.ua.cs.acm.services.SemesterService;
 import edu.ua.cs.acm.services.MemberService;
 import org.omg.CORBA.Environment;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Calendar;
@@ -29,12 +34,14 @@ public class SemesterController {
     private final SemesterService semesterService;
     private final MemberService memberService;
     private final String authKey;
+    private final EmailService emailService;
 
     @Autowired
-    public SemesterController(SemesterService semesterService, MemberService memberService, @Value("${authorization-key}") String authKey) {
+    public SemesterController(SemesterService semesterService, MemberService memberService, @Value("${authorization-key}") String authKey, EmailService emailService) {
         this.semesterService = semesterService;
         this.memberService = memberService;
         this.authKey = authKey;
+        this.emailService = emailService;
     }
 
     @GetMapping()
@@ -80,14 +87,12 @@ public class SemesterController {
             Integer dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
             if (scheduled_day == dayOfWeek && LocalDateTime.now().isBefore(semesterService.currentDueDate())) {
                 List<Member> unpaidMembers = memberService.unpaidMembers(semesterService.getCurrentSemester());
-                String response = "Going to send an email to:";
                 for (Member m: unpaidMembers) {
-                    response += " " + m.getCrimsonEmail();
+                    emailService.sendMessage(new DueReminderEmailMessage(m.getFirstName(), m.getCrimsonEmail(), semesterService.currentDueDate()));
                 }
-                return new HttpEntity(response);
+                return new HttpEntity("ok");
             }
         }
-
         return new HttpEntity("nothing sent; past due date");
     }
 
@@ -97,6 +102,21 @@ public class SemesterController {
         response.put("dueDate", semesterService.currentDueDate());
         response.put("unpaidMembers", memberService.unpaidMembers(semesterService.getCurrentSemester()));
         return response;
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity addSemester(@RequestBody AddSemesterMessage request) {
+        LocalDateTime startDate = LocalDate.parse(request.getStartDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+        LocalDateTime endDate = LocalDate.parse(request.getEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+        LocalDateTime dueDate = LocalDate.parse(request.getDueDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+        Semester newSemester = new Semester(startDate, endDate, dueDate);
+        try {
+            semesterService.saveSemester(newSemester);
+        }
+        catch (Exception ex){
+            return ResponseEntity.ok("Semester could not be added.");
+        }
+        return ResponseEntity.ok("Added " + request.getStartDate() + " to " + request.getEndDate() + " as semester");
     }
 
 }
