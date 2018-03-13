@@ -7,6 +7,8 @@ import edu.ua.cs.acm.messages.UpdateShirtSizeMessage;
 import edu.ua.cs.acm.messages.PayForSemesterMessage;
 import edu.ua.cs.acm.services.MemberService;
 import edu.ua.cs.acm.services.SemesterService;
+import edu.ua.cs.acm.services.EmailService;
+import edu.ua.cs.acm.email.PaymentConfirmationEmailMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -28,11 +30,13 @@ public class MemberController {
 
     private final MemberService memberService;
     private final SemesterService semesterService;
+    private final EmailService emailService;
 
     @Autowired
-    public MemberController(MemberService memberService, SemesterService semesterService) {
+    public MemberController(MemberService memberService, SemesterService semesterService, EmailService emailService) {
         this.memberService = memberService;
         this.semesterService = semesterService;
+        this.emailService = emailService;
     }
 
     @DeleteMapping()
@@ -114,6 +118,8 @@ public class MemberController {
             if (payingMember != null) {
                 memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
                 memberService.updateShirtSize(payingMember, message.getSize());
+                String currentDate = new Integer(LocalDateTime.now().getMonthValue()).toString() + "-" + new Integer(LocalDateTime.now().getDayOfMonth()).toString();
+                emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), currentDate, "$10"));
             }
 
             return ResponseEntity.ok("success");
