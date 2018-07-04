@@ -44,7 +44,7 @@ public class JoinController {
             return null;
         }
 
-        return 'ok';
+        return "ok";
     }
 
 }
