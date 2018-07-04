@@ -27,6 +27,7 @@ public class JoinController {
         this.memberService = memberService;
     }
 
+    @CrossOrigin
     @PostMapping()
     public ResponseEntity joinAcm(@RequestBody JoinMessage message) {
 
