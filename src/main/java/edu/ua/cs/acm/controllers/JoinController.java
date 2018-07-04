@@ -29,7 +29,7 @@ public class JoinController {
 
     @CrossOrigin
     @PostMapping()
-    public ResponseEntity joinAcm(@RequestBody JoinMessage message) {
+    public String joinAcm(@RequestBody JoinMessage message) {
 
         try {
             Member m = new Member(message.getFirstName(), message.getLastName(), message.getShirtSize(),
@@ -41,10 +41,10 @@ public class JoinController {
                     message.getEmail(), message.wantsSlackToJoinSlack()));
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return null;
         }
 
-        return ResponseEntity.ok().build();
+        return 'ok';
     }
 
 }
