@@ -132,7 +132,7 @@ public class MemberController {
             }
             return new ResponseEntity<>("{\"noUser\": \"true\"}", HttpStatus.OK);
         }
-        else return ResponseEntity.ok("{\"notValid\": \"true\"}", HttpStatus.OK);
+        else return new ResponseEntity<>("{\"notValid\": \"true\"}", HttpStatus.OK);
     }
 
 }
