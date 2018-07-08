@@ -14,10 +14,8 @@ public class PayForSemesterMessage {
     private String email;
     private String purchaseID;
     private String size;
-
-    @JsonSerialize(using = ToStringSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime datePaid;
+    private String datePaid;
+    private String paymentType;
 
     public String getEmail() { return this.email; }
 
@@ -31,7 +29,11 @@ public class PayForSemesterMessage {
 
     public void setSize(String size) { this.size = size; }
 
-    public LocalDateTime getDatePaid() { return this.datePaid; }
+    public String getDatePaid() { return this.datePaid; }
 
-    public void setDatePaid(LocalDateTime datePaid) { this.datePaid = datePaid; }
+    public void setDatePaid(String datePaid) { this.datePaid = datePaid; }
+
+    public String getPaymentType() { return  this.paymentType; }
+
+    public void setPaymentType(String paymentType) { this.paymentType = paymentType; }
 }

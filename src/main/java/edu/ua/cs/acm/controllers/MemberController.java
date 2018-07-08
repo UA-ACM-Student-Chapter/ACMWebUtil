@@ -119,9 +119,14 @@ public class MemberController {
             if (payingMember != null) {
                 memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
                 memberService.updateShirtSize(payingMember, message.getSize());
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                String formattedDateTime = message.getDatePaid().format(formatter);
-                emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), formattedDateTime, "$10"));
+                String paymentType = "Other";
+                if (message.getPaymentType() == "credit_card") {
+                    paymentType = "Credit Card";
+                }
+                else if (message.getPaymentType() == "venmo_account"){
+                    paymentType = "Venmo";
+                }
+                emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), message.getDatePaid(), "$10", paymentType, message.getPurchaseID()));
             }
 
             return ResponseEntity.ok("success");

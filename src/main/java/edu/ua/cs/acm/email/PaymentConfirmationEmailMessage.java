@@ -13,15 +13,19 @@ public class PaymentConfirmationEmailMessage extends DirectEmailMessage {
     private final String lastName;
     private final String datePaid;
     private final String amountPaid;
+    private final String paymentType;
+    private final String purchaseID;
     private static final String TEMPLATE_NAME = "payment_confirmation.html";
 
-    public PaymentConfirmationEmailMessage(String firstName, String lastName, String email, String datePaid, String amountPaid) {
+    public PaymentConfirmationEmailMessage(String firstName, String lastName, String email, String datePaid, String amountPaid, String paymentType, String purchaseID) {
         super(email, "[UA ACM] Thanks for Paying Dues!", 5);
         setHtml(true);
         this.firstName = firstName;
         this.lastName = lastName;
         this.datePaid = datePaid;
         this.amountPaid = amountPaid;
+        this.paymentType = paymentType;
+        this.purchaseID = purchaseID;
     }
 
     @Override
@@ -31,6 +35,8 @@ public class PaymentConfirmationEmailMessage extends DirectEmailMessage {
         model.put("lastName", getLastName());
         model.put("datePaid", getDatePaid());
         model.put("amountPaid", getAmountPaid());
+        model.put("paymentType", getPaymentType());
+        model.put("purchaseID", getPurchaseID());
         return renderTemplate(TEMPLATE_NAME, model);
     }
 
@@ -43,4 +49,8 @@ public class PaymentConfirmationEmailMessage extends DirectEmailMessage {
     }
 
     public String getAmountPaid() { return amountPaid; }
+
+    public String getPaymentType() { return paymentType; }
+
+    public String getPurchaseID() { return purchaseID; }
 }
