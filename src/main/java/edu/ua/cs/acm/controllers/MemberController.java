@@ -118,8 +118,7 @@ public class MemberController {
             if (payingMember != null) {
                 memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
                 memberService.updateShirtSize(payingMember, message.getSize());
-                String currentDate = new Integer(LocalDateTime.now().getMonthValue()).toString() + "-" + new Integer(LocalDateTime.now().getDayOfMonth()).toString();
-                emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), currentDate, "$10"));
+                emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), message.getDatePaid(), "$10"));
             }
 
             return ResponseEntity.ok("success");
