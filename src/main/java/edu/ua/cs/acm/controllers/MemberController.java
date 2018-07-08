@@ -129,6 +129,7 @@ public class MemberController {
                 }
                 else if (message.getPaymentType().equals("venmo_account")){
                     paymentType = "Venmo";
+                    ccNumber = message.getLast4();
                 }
                 System.out.println(message.getPaymentType());
                 emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), message.getDatePaid(), "$10", paymentType, message.getPurchaseID(), ccNumber, message.getCardType()));
