@@ -95,8 +95,7 @@ public class MemberController {
     }
 
     @PostMapping("/payforsemester")
-    @ResponseBody
-    public String payForSemester(@RequestBody PayForSemesterMessage message) {
+    public ResponseEntity<String> payForSemester(@RequestBody PayForSemesterMessage message) {
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -131,7 +130,7 @@ public class MemberController {
                 emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), message.getDatePaid(), "$10", paymentType, message.getPurchaseID()));
             }
 
-            return "{\"id\":\"" + message.getPurchaseID() + "\", \"email\":\"" + message.getEmail() + "\", \"name\":\"" + payingMember.getFirstName() + " " + getLastName() + "\", \"date\": \"" + message.getDatePaid() + "\"}";
+            return ResponseEntity.ok("{\"id\":\"" + message.getPurchaseID() + "\", \"email\":\"" + message.getEmail() + "\", \"name\":\"" + payingMember.getFirstName() + " " + getLastName() + "\", \"date\": \"" + message.getDatePaid() + "\"}");
         }
         else return ResponseEntity.ok("could not validate transaction");
     }
