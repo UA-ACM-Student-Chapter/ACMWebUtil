@@ -107,6 +107,8 @@ public class MemberController {
         HttpEntity<String> entity = new HttpEntity<String>(requestJson,headers);
         String response = restTemplate.postForObject(url, entity, String.class);
 
+        System.out.println(response);
+
         if (response.equals("yes")) {
 
             Member payingMember = memberService.getByCrimsonEmail(message.getEmail());
