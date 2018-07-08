@@ -120,10 +120,10 @@ public class MemberController {
                 memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
                 memberService.updateShirtSize(payingMember, message.getSize());
                 String paymentType = "Other";
-                if (message.getPaymentType() == "credit_card") {
+                if (message.getPaymentType().equals("credit_card")) {
                     paymentType = "Credit Card";
                 }
-                else if (message.getPaymentType() == "venmo_account"){
+                else if (message.getPaymentType().equals("venmo_account")){
                     paymentType = "Venmo";
                 }
                 System.out.println(message.getPaymentType());
