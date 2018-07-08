@@ -16,6 +16,8 @@ public class PayForSemesterMessage {
     private String size;
     private String datePaid;
     private String paymentType;
+    private String last4;
+    private String cardType;
 
     public String getEmail() { return this.email; }
 
@@ -36,4 +38,12 @@ public class PayForSemesterMessage {
     public String getPaymentType() { return  this.paymentType; }
 
     public void setPaymentType(String paymentType) { this.paymentType = paymentType; }
+
+    public String getLast4() { return  this.last4; }
+
+    public void setLast4(String last4) { this.last4 = last4; }
+    
+    public String getCardType() { return  this.cardType; }
+
+    public void setCardType(String cardType) { this.cardType = cardType; }
 }

@@ -15,9 +15,11 @@ public class PaymentConfirmationEmailMessage extends DirectEmailMessage {
     private final String amountPaid;
     private final String paymentType;
     private final String purchaseID;
+    private final String hiddenCCNumber;
+    private final String cardType;
     private static final String TEMPLATE_NAME = "payment_confirmation.html";
 
-    public PaymentConfirmationEmailMessage(String firstName, String lastName, String email, String datePaid, String amountPaid, String paymentType, String purchaseID) {
+    public PaymentConfirmationEmailMessage(String firstName, String lastName, String email, String datePaid, String amountPaid, String paymentType, String purchaseID, String hiddenCCNumber, String cardType) {
         super(email, "[UA ACM] Thanks for Paying Dues!", 5);
         setHtml(true);
         this.firstName = firstName;
@@ -26,6 +28,8 @@ public class PaymentConfirmationEmailMessage extends DirectEmailMessage {
         this.amountPaid = amountPaid;
         this.paymentType = paymentType;
         this.purchaseID = purchaseID;
+        this.hiddenCCNumber = hiddenCCNumber;
+        this.cardType = cardType;
     }
 
     @Override
@@ -37,6 +41,8 @@ public class PaymentConfirmationEmailMessage extends DirectEmailMessage {
         model.put("amountPaid", getAmountPaid());
         model.put("paymentType", getPaymentType());
         model.put("purchaseID", getPurchaseID());
+        model.put("hiddenCCNumber", getHiddenCCNumber());
+        model.put("cardType", getCardType());
         return renderTemplate(TEMPLATE_NAME, model);
     }
 
@@ -53,4 +59,8 @@ public class PaymentConfirmationEmailMessage extends DirectEmailMessage {
     public String getPaymentType() { return paymentType; }
 
     public String getPurchaseID() { return purchaseID; }
+
+    public String getHiddenCCNumber() { return hiddenCCNumber; }
+
+    public String getCardType() { return cardType; }
 }

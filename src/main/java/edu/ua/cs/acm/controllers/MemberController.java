@@ -116,19 +116,21 @@ public class MemberController {
             System.out.println(message.getEmail());
             System.out.println(payingMember);
             String paymentType = "Other";
+            String ccNumber = "N/A";
 
             if (payingMember != null) {
                 memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
                 memberService.updateShirtSize(payingMember, message.getSize());
                 if (message.getPaymentType().equals("credit_card")) {
                     paymentType = "Credit Card";
+                    ccNumber = "************" + message.getLast4();
                 }
                 else if (message.getPaymentType().equals("venmo_account")){
                     paymentType = "Venmo";
                 }
                 System.out.println(message.getPaymentType());
-                emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), message.getDatePaid(), "$10", paymentType, message.getPurchaseID()));
-                return new ResponseEntity<>("{\"id\":\"" + message.getPurchaseID() + "\", \"email\":\"" + message.getEmail() + "\", \"name\":\"" + payingMember.getFirstName() + " " + payingMember.getLastName() + "\", \"paymentType\":\"" + paymentType + "\", \"date\": \"" + message.getDatePaid() + "\"}", HttpStatus.OK);
+                emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), message.getDatePaid(), "$10", paymentType, message.getPurchaseID(), ccNumber, message.getCardType()));
+                return new ResponseEntity<>("{\"id\":\"" + message.getPurchaseID() + "\", \"email\":\"" + message.getEmail() + "\", \"name\":\"" + payingMember.getFirstName() + " " + payingMember.getLastName() + "\", \"paymentType\":\"" + paymentType + "\", \"cardType\":\"" + message.getCardType() + "\", \"hiddenCCNumber\":\"" + ccNumber + "\", \"date\": \"" + message.getDatePaid() + "\"}", HttpStatus.OK);
             }
             return new ResponseEntity<>("{\"noUser\": \"true\"}", HttpStatus.OK);
         }
