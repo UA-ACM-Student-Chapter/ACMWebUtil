@@ -128,7 +128,7 @@ public class MemberController {
                 }
                 System.out.println(message.getPaymentType());
                 emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), message.getDatePaid(), "$10", paymentType, message.getPurchaseID()));
-                return new ResponseEntity<>("{\"id\":\"" + message.getPurchaseID() + "\", \"email\":\"" + message.getEmail() + "\", \"name\":\"" + payingMember.getFirstName() + " " + payingMember.getLastName() + "\", \"paymentType\":\"" + paymentType + "\", \"error\":\"false\"" + "\", \"date\": \"" + message.getDatePaid() + "\"}", HttpStatus.OK);
+                return new ResponseEntity<>("{\"id\":\"" + message.getPurchaseID() + "\", \"email\":\"" + message.getEmail() + "\", \"name\":\"" + payingMember.getFirstName() + " " + payingMember.getLastName() + "\", \"paymentType\":\"" + paymentType + "\", \"date\": \"" + message.getDatePaid() + "\"}", HttpStatus.OK);
             }
             return new ResponseEntity<>("{\"noUser\": \"true\"}", HttpStatus.OK);
         }
