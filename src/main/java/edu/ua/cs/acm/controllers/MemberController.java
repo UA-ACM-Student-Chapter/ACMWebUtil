@@ -130,7 +130,7 @@ public class MemberController {
                 emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), message.getDatePaid(), "$10", paymentType, message.getPurchaseID()));
             }
 
-            return new ResponseEntity<>("{\"id\":\"" + message.getPurchaseID() + "\", \"email\":\"" + message.getEmail() + "\", \"name\":\"" + payingMember.getFirstName() + " " + payingMember.getLastName() + "\", \"date\": \"" + message.getDatePaid() + "\"}");
+            return new ResponseEntity<>("{\"id\":\"" + message.getPurchaseID() + "\", \"email\":\"" + message.getEmail() + "\", \"name\":\"" + payingMember.getFirstName() + " " + payingMember.getLastName() + "\", \"date\": \"" + message.getDatePaid() + "\"}", HttpStatus.OK);
         }
         else return ResponseEntity.ok("could not validate transaction");
     }
