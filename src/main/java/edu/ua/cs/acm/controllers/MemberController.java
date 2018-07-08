@@ -115,11 +115,11 @@ public class MemberController {
             System.out.println(semesterId);
             System.out.println(message.getEmail());
             System.out.println(payingMember);
+            String paymentType = "Other";
 
             if (payingMember != null) {
                 memberService.payForSemester(payingMember, semesterId, message.getPurchaseID());
                 memberService.updateShirtSize(payingMember, message.getSize());
-                String paymentType = "Other";
                 if (message.getPaymentType().equals("credit_card")) {
                     paymentType = "Credit Card";
                 }
@@ -128,9 +128,9 @@ public class MemberController {
                 }
                 System.out.println(message.getPaymentType());
                 emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), message.getDatePaid(), "$10", paymentType, message.getPurchaseID()));
+                return new ResponseEntity<>("{\"id\":\"" + message.getPurchaseID() + "\", \"email\":\"" + message.getEmail() + "\", \"name\":\"" + payingMember.getFirstName() + " " + payingMember.getLastName() + "\", \"paymentType\":\"" + paymentType + "\", \"error\":\"false\"" + "\", \"date\": \"" + message.getDatePaid() + "\"}", HttpStatus.OK);
             }
-
-            return new ResponseEntity<>("{\"id\":\"" + message.getPurchaseID() + "\", \"email\":\"" + message.getEmail() + "\", \"name\":\"" + payingMember.getFirstName() + " " + payingMember.getLastName() + "\", \"date\": \"" + message.getDatePaid() + "\"}", HttpStatus.OK);
+            return ResponseEntity<>("{\"error\": \"true\"}");
         }
         else return ResponseEntity.ok("could not validate transaction");
     }
