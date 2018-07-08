@@ -95,6 +95,7 @@ public class MemberController {
     }
 
     @PostMapping("/payforsemester")
+    @ResponseBody
     public String payForSemester(@RequestBody PayForSemesterMessage message) {
 
         RestTemplate restTemplate = new RestTemplate();
