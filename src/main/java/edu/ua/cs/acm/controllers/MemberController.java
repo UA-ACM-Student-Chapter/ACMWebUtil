@@ -130,9 +130,9 @@ public class MemberController {
                 emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), message.getDatePaid(), "$10", paymentType, message.getPurchaseID()));
                 return new ResponseEntity<>("{\"id\":\"" + message.getPurchaseID() + "\", \"email\":\"" + message.getEmail() + "\", \"name\":\"" + payingMember.getFirstName() + " " + payingMember.getLastName() + "\", \"paymentType\":\"" + paymentType + "\", \"error\":\"false\"" + "\", \"date\": \"" + message.getDatePaid() + "\"}", HttpStatus.OK);
             }
-            return new ResponseEntity<>("{\"error\": \"true\"}", HttpStatus.OK);
+            return new ResponseEntity<>("{\"noUser\": \"true\"}", HttpStatus.OK);
         }
-        else return ResponseEntity.ok("could not validate transaction");
+        else return ResponseEntity.ok("{\"notValid\": \"true\"}", HttpStatus.OK);
     }
 
 }
