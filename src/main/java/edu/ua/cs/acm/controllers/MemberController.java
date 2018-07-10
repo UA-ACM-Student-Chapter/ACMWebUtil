@@ -40,15 +40,21 @@ public class MemberController {
         this.emailService = emailService;
     }
 
-    @DeleteMapping()
-    public ResponseEntity deleteMember(@RequestParam("email") String email) {
-        Member m = memberService.getByCrimsonEmail(email);
+    //Removed deleting since everything is public currently
+    // @DeleteMapping()
+    // public ResponseEntity deleteMember(@RequestParam("email") String email) {
+    //     Member m = memberService.getByCrimsonEmail(email);
 
-        if(m != null) {
-            memberService.delete(m);
-        }
+    //     if(m != null) {
+    //         memberService.delete(m);
+    //     }
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    //     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    // }
+
+    @GetMapping("/wakeup")
+    public ResponseEntity wakeup() {
+        return ResponseEntity.ok("awake");
     }
 
     @GetMapping("/unpaid")
