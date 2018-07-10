@@ -52,6 +52,7 @@ public class MemberController {
     //     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     // }
 
+    @CrossOrigin
     @GetMapping("/wakeup")
     public ResponseEntity wakeup() {
         return ResponseEntity.ok("awake");
