@@ -40,7 +40,6 @@ public class MemberController {
         this.emailService = emailService;
     }
 
-    //Removed deleting since everything is public currently
     // @DeleteMapping()
     // public ResponseEntity deleteMember(@RequestParam("email") String email) {
     //     Member m = memberService.getByCrimsonEmail(email);
@@ -59,46 +58,58 @@ public class MemberController {
     }
 
     @GetMapping("/unpaid")
-    public ResponseEntity<List<Member>> unpaidMembers() {
-        return ResponseEntity.ok(memberService.unpaidMembers(semesterService.getCurrentSemester()));
+    public ResponseEntity<Object> unpaidMembers(@RequestHeader String secretKey) {
+        if (secretKey.equals(System.getenv("SECRET_KEY"))) {
+            return ResponseEntity.ok(memberService.unpaidMembers(semesterService.getCurrentSemester()));
+        }
+        return ResponseEntity.ok("no secret key, no secret knowledge");
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Member>> allMembers() {
-        return ResponseEntity.ok(memberService.allMembers());
+    public ResponseEntity<Object> allMembers(@RequestHeader String secretKey) {
+        if (secretKey.equals(System.getenv("SECRET_KEY"))) {
+            return ResponseEntity.ok(memberService.allMembers());
+        }
+        return ResponseEntity.ok("no secret key, no secret knowledge");
     }
 
     @PostMapping("/updateshirtsize")
     public ResponseEntity<Object> updateShirtSize(@RequestBody UpdateShirtSizeMessage message) throws URISyntaxException {
-        Member memberToUpdate = memberService.getByCrimsonEmail(message.getEmail());
+        if (message.getSecretKey().equals(System.getenv("SECRET_KEY"))) {
+            Member memberToUpdate = memberService.getByCrimsonEmail(message.getEmail());
 
-        if (memberToUpdate != null) {
-            memberService.updateShirtSize(memberToUpdate, message.getNewShirtSize());
+            if (memberToUpdate != null) {
+                memberService.updateShirtSize(memberToUpdate, message.getNewShirtSize());
+            }
+
+            // redirect the user to a success page
+            URI success = new URI("http://www.UA-ACM-Student-Chapter.github.io/update-shirt-size/success.html");
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setLocation(success);
+            return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
         }
-
-        // redirect the user to a success page
-        URI success = new URI("http://www.UA-ACM-Student-Chapter.github.io/update-shirt-size/success.html");
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(success);
-        return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+        return ResponseEntity.ok("no secret key, no secret knowledge");
     }
 
     @PostMapping("/ispaid")
-    public ResponseEntity memberIsPaid(@RequestBody IsPaidMessage message) {
-        Member m = memberService.getByCrimsonEmail(message.getEmail());
-        int paidMember = -1;
+    public Object memberIsPaid(@RequestBody IsPaidMessage message) {
+        if (message.getSecretKey().equals(System.getenv("SECRET_KEY"))) {
+            Member m = memberService.getByCrimsonEmail(message.getEmail());
+            Integer paidMember = null;
 
-        if (m != null) {
-            paidMember = semesterService.memberIsPaid(m);
-        } else {
-            return ResponseEntity.ok("member not found");
+            if (m != null) {
+                paidMember = semesterService.memberIsPaid(m);
+            } else {
+                return ResponseEntity.ok("member not found");
+            }
+            if (paidMember == null) {
+                return ResponseEntity.ok("not paid");
+            }
+            else {
+                return ResponseEntity.ok("paid");
+            }
         }
-
-        if (m.getId() == paidMember) {
-            return ResponseEntity.ok("paid");
-        } else {
-            return ResponseEntity.ok("not paid");
-        }
+        return "no secret key, no secret knowledge";
     }
 
     @PostMapping("/payforsemester")
@@ -114,16 +125,10 @@ public class MemberController {
         HttpEntity<String> entity = new HttpEntity<String>(requestJson,headers);
         String response = restTemplate.postForObject(url, entity, String.class);
 
-        System.out.println(response);
-
-        if (response.equals("yes")) {
+        if (response != "no" && response.equals(message.getDatePaid())) {
 
             Member payingMember = memberService.getByCrimsonEmail(message.getEmail());
-            System.out.println("here!!");
             int semesterId = semesterService.currentSemesterId();
-            System.out.println(semesterId);
-            System.out.println(message.getEmail());
-            System.out.println(payingMember);
             String paymentType = "Other";
             String ccNumber = "N/A";
 

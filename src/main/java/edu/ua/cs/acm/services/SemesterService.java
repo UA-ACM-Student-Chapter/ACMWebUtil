@@ -12,6 +12,6 @@ public interface SemesterService {
     Semester getCurrentSemester();
     int currentSemesterId();
     LocalDateTime currentDueDate();
-    int memberIsPaid(Member m);
-    void deleteSemester(Semester semester);
+    Integer memberIsPaid(Member m);
+//    void deleteSemester(Semester semester);
 }

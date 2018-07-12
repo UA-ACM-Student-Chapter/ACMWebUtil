@@ -92,31 +92,38 @@ public class SemesterController {
                 }
                 return new HttpEntity("ok");
             }
+            return new HttpEntity("nothing sent; past due date");
         }
-        return new HttpEntity("nothing sent; past due date");
+        return new HttpEntity("no secret key, no secret knowledge");
     }
 
     @GetMapping("/unpaiddetails")
-    public Map<String, Object> unpaidDetails() {
-        HashMap<String, Object> response = new HashMap<>();
-        response.put("dueDate", semesterService.currentDueDate());
-        response.put("unpaidMembers", memberService.unpaidMembers(semesterService.getCurrentSemester()));
-        return response;
+    public Object unpaidDetails(@RequestHeader String secretKey) {
+        if (secretKey.equals(System.getenv("SECRET_KEY"))) {
+            HashMap<String, Object> response = new HashMap<>();
+            response.put("dueDate", semesterService.currentDueDate());
+            response.put("unpaidMembers", memberService.unpaidMembers(semesterService.getCurrentSemester()));
+            return response;
+        }
+        return "no secret key, no secret knowledge";
     }
 
     @PostMapping("/add")
     public ResponseEntity addSemester(@RequestBody AddSemesterMessage request) {
-        LocalDateTime startDate = LocalDate.parse(request.getStartDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
-        LocalDateTime endDate = LocalDate.parse(request.getEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
-        LocalDateTime dueDate = LocalDate.parse(request.getDueDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
-        Semester newSemester = new Semester(startDate, endDate, dueDate);
-        try {
-            semesterService.saveSemester(newSemester);
+        if (request.getSecretKey().equals(System.getenv("SECRET_KEY"))) {
+            LocalDateTime startDate = LocalDate.parse(request.getStartDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+            LocalDateTime endDate = LocalDate.parse(request.getEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+            LocalDateTime dueDate = LocalDate.parse(request.getDueDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+            Semester newSemester = new Semester(startDate, endDate, dueDate);
+            try {
+                semesterService.saveSemester(newSemester);
+            }
+            catch (Exception ex){
+                return ResponseEntity.ok("Semester could not be added.");
+            }
+            return ResponseEntity.ok("Added " + request.getStartDate() + " to " + request.getEndDate() + " as semester");
         }
-        catch (Exception ex){
-            return ResponseEntity.ok("Semester could not be added.");
-        }
-        return ResponseEntity.ok("Added " + request.getStartDate() + " to " + request.getEndDate() + " as semester");
+        return ResponseEntity.ok("no secret key, no secret knowledge");
     }
 
 }

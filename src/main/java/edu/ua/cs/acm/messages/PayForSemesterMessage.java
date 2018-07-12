@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 /**
  * Created by Hunter Allen on 2/26/18
  **/
-public class PayForSemesterMessage {
+public class    PayForSemesterMessage {
     private String email;
     private String purchaseID;
     private String size;

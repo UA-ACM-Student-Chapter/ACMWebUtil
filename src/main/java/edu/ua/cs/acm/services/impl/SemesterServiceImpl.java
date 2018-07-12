@@ -50,15 +50,15 @@ public class SemesterServiceImpl implements SemesterService {
     }
 
     @Override
-    public int memberIsPaid(Member m) {
+    public Integer memberIsPaid(Member m) {
         Integer memberID = m.getId();
         Integer semesterID = semesterRepository.currentSemesterId();
 
         return semesterRepository.isPaid(memberID, semesterID);
     }
 
-    @Override
-    public void deleteSemester(Semester semester) {
-        this.semesterRepository.delete(semester);
-    }
+//    @Override
+//    public void deleteSemester(Semester semester) {
+//        this.semesterRepository.delete(semester);
+//    }
 }

@@ -9,11 +9,16 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
  * Easier to serialize the JSON to a String with a message class
  */
 public class AddSemesterMessage {
+    private String secretKey;
     private String startDate;
     private String endDate;
     private String dueDate;
 
     @JsonSerialize(using = ToStringSerializer.class)
+
+    public String getSecretKey() { return secretKey; }
+
+    public void setSecretKey(String secretKey) { this.secretKey = secretKey; }
 
     public String getStartDate() { return startDate; }
 

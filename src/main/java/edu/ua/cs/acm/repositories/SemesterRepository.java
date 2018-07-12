@@ -21,5 +21,5 @@ public interface SemesterRepository extends CrudRepository <Semester, Integer> {
     LocalDateTime currentDueDate();
 
     @Query(value = "SELECT member_id FROM MemberSemesterLink WHERE member_id = ?1 AND semester_id = ?2", nativeQuery = true)
-    int isPaid(Integer memberID, Integer semesterID);
+    Integer isPaid(Integer memberID, Integer semesterID);
 }

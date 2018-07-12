@@ -9,9 +9,14 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
  * Easier to serialize the JSON to a String with a message class
  */
 public class IsPaidMessage {
+    private String secretKey;
     private String email;
 
     @JsonSerialize(using = ToStringSerializer.class)
+
+    public String getSecretKey() { return secretKey; }
+
+    public void setSecretKey(String secretKey) { this.secretKey = secretKey; }
 
     public String getEmail() { return email; }
 

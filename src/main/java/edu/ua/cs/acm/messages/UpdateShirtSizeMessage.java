@@ -5,10 +5,15 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 /* Created by Jared Cleghorn on 2/19/18. */
 public class UpdateShirtSizeMessage {
+    private String secretKey;
     private String email;
     private String newShirtSize;
 
     @JsonSerialize(using = ToStringSerializer.class)
+
+    public String getSecretKey() { return secretKey; }
+
+    public void setSecretKey(String secretKey) { this.secretKey = secretKey; }
 
     public String getEmail() {
         return email;
