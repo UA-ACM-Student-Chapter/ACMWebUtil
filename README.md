@@ -1,5 +1,17 @@
 # ACM Web Utility
 
-- Helps us automate some of the more mundane tasks.
+**What the heck is this for?**
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+* It powers our website to make stuff like joining and paying dues possible
+* It carries out automated tasks like sending dues reminders
+
+**Through what sorcery is this achieved?**
+
+* The Spring framework makes it easy to make a REST API in Java, so we used that
+* We went relational for our database and use PostgreSQL
+
+**Can't I wreak havoc on UA ACM with knowledge of this code??**
+
+* Hopefully not. Our API is totally public, and is documented at https://ua-acm-student-chapter.github.io/backend_docs.html  
+ 
+* Any important requests are protected by an authorization key, and payments have special verification to make sure you can't just add yourself as a paid member :)
