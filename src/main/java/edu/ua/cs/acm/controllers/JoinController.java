@@ -2,6 +2,7 @@ package edu.ua.cs.acm.controllers;
 
 import edu.ua.cs.acm.domain.Member;
 import edu.ua.cs.acm.email.JoinEmailMessage;
+import edu.ua.cs.acm.email.ListservCommand;
 import edu.ua.cs.acm.messages.JoinMessage;
 import edu.ua.cs.acm.services.EmailService;
 import edu.ua.cs.acm.services.MemberService;
@@ -39,6 +40,8 @@ public class JoinController {
 
             emailService.sendMessage(new JoinEmailMessage(message.getFirstName(), message.getLastName(),
                     message.getEmail(), message.wantsSlackToJoinSlack()));
+            emailService.sendMessage(new ListservCommand(message.getFirstName(), message.getLastName(),
+                    message.getEmail(), "ADD"));
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
             return null;
