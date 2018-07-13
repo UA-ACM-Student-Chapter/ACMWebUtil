@@ -78,11 +78,7 @@ public class MemberController {
                 memberService.updateShirtSize(memberToUpdate, message.getNewShirtSize());
             }
 
-            // redirect the user to a success page
-            URI success = new URI("http://www.UA-ACM-Student-Chapter.github.io/update-shirt-size/success.html");
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.setLocation(success);
-            return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+            return ResponseEntity.ok("updated");
         }
         return ResponseEntity.ok("no secret key, no secret knowledge");
     }
