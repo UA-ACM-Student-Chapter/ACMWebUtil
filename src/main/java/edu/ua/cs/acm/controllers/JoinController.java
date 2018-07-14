@@ -11,6 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Created by jzarobsky on 9/4/17.
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class JoinController {
 
     private static final Logger LOG = LoggerFactory.getLogger(JoinController.class);
+    private static final Gson objGson = new GsonBuilder().setPrettyPrinting().create();
     private final EmailService emailService;
     private final MemberService memberService;
 
@@ -28,26 +33,71 @@ public class JoinController {
         this.memberService = memberService;
     }
 
-    @CrossOrigin
-    @PostMapping()
-    public String joinAcm(@RequestBody JoinMessage message) {
+    private boolean memberIsAlreadyAdded(String email) {
+        return memberService.getByCrimsonEmail(email) != null;
+    }
 
+    private boolean addMemberToDb(JoinMessage message) {
         try {
-            Member m = new Member(message.getFirstName(), message.getLastName(), message.getShirtSize(),
+            Member member = new Member(message.getFirstName(), message.getLastName(), message.getShirtSize(),
                     message.getBirthday(), message.getEmail());
-
-            memberService.save(m);
-
-            emailService.sendMessage(new JoinEmailMessage(message.getFirstName(), message.getLastName(),
-                    message.getEmail(), message.wantsSlackToJoinSlack()));
-            emailService.sendMessage(new ListservCommand(message.getFirstName(), message.getLastName(),
-                    message.getEmail(), "ADD"));
+            memberService.save(member);
         } catch (Exception ex) {
             LOG.error(ex.getMessage());
-            return null;
+            return false;
         }
+        return true;
+    }
 
-        return "ok";
+    private boolean sendWelcomeEmail(JoinMessage message) {
+        try {
+            emailService.sendMessage(new JoinEmailMessage(message.getFirstName(), message.getLastName(),
+                    message.getEmail(), message.wantsSlackToJoinSlack()));
+        }
+        catch (Exception ex) {
+            LOG.error(ex.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    private boolean sendListservAddCommand(JoinMessage message) {
+        try {
+            emailService.sendMessage(new ListservCommand(message.getFirstName(), message.getLastName(),
+                    message.getEmail(), "ADD"));
+        }
+        catch (Exception ex) {
+            LOG.error(ex.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    private ResponseEntity<Object> createJoinResponse(String errorMessage, Map<String, Object> response) {
+        response.put("errorMessage", errorMessage);
+        return new ResponseEntity<>(objGson.toJson(response), HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @PostMapping()
+    public ResponseEntity<Object> joinAcm(@RequestBody JoinMessage message) {
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        if (memberIsAlreadyAdded(message.getEmail())) {
+            return createJoinResponse("The member is already added", response);
+        }
+        if (!addMemberToDb(message)) {
+            return createJoinResponse("The member could not be saved. Email acm-off@listserv.ua.edu for help.", response);
+        }
+        if (!sendWelcomeEmail(message)) {
+            return createJoinResponse("There was an error sending the welcome email. Email acm-off@listserv.ua.edu for help.", response);
+        }
+        if (!sendListservAddCommand(message)) {
+            return createJoinResponse("There was an error adding the member to the mailing list. Email acm-off@listserv.ua.edu for help.", response);
+        }
+        response.put("success", true);
+        return createJoinResponse("", response);
     }
 
 }
