@@ -1,10 +1,12 @@
 package edu.ua.cs.acm.controllers;
 
 import edu.ua.cs.acm.domain.Member;
+import edu.ua.cs.acm.domain.MemberSemesterLink;
 import edu.ua.cs.acm.domain.Semester;
 import edu.ua.cs.acm.messages.IsPaidMessage;
 import edu.ua.cs.acm.messages.UpdateShirtSizeMessage;
 import edu.ua.cs.acm.messages.PayForSemesterMessage;
+import edu.ua.cs.acm.services.CommonService;
 import edu.ua.cs.acm.services.MemberService;
 import edu.ua.cs.acm.services.SemesterService;
 import edu.ua.cs.acm.services.EmailService;
@@ -14,9 +16,11 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
-
-import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Created by jzarobsky on 11/21/17.
@@ -28,24 +32,15 @@ public class MemberController {
     private final MemberService memberService;
     private final SemesterService semesterService;
     private final EmailService emailService;
+    private final CommonService commonService;
 
     @Autowired
-    public MemberController(MemberService memberService, SemesterService semesterService, EmailService emailService) {
+    public MemberController(MemberService memberService, SemesterService semesterService, EmailService emailService, CommonService commonService) {
         this.memberService = memberService;
         this.semesterService = semesterService;
         this.emailService = emailService;
+        this.commonService = commonService;
     }
-
-    // @DeleteMapping()
-    // public ResponseEntity deleteMember(@RequestParam("email") String email) {
-    //     Member m = memberService.getByCrimsonEmail(email);
-
-    //     if(m != null) {
-    //         memberService.delete(m);
-    //     }
-
-    //     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    // }
 
     @CrossOrigin
     @GetMapping("/wakeup")
@@ -67,6 +62,26 @@ public class MemberController {
             return ResponseEntity.ok(memberService.allMembers());
         }
         return ResponseEntity.ok("no secret key, no secret knowledge");
+    }
+
+    @CrossOrigin
+    @PostMapping("/checkMemberForDues")
+    public ResponseEntity<Object> checkMemberForDues(@RequestBody PayForSemesterMessage message) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        Semester currentSemester = semesterService.getCurrentSemester();
+        if (currentSemester == null) {
+            return commonService.createResponse("There is no active semester to pay for right now. Contact acm-off@listserv.ua.edu for questions.", response);
+        }
+        Member member = memberService.getByCrimsonEmail(message.getEmail());
+        if (member == null) {
+            return commonService.createResponse(member.getCrimsonEmail() + " is not linked to an existing member. Please join before paying dues.", response);
+        }
+        if (currentSemester.getMembers().contains(member)) {
+            return commonService.createResponse((member.getCrimsonEmail() + " has already paid for the current semester."), response);
+        }
+        response.put("success", true);
+        return commonService.createResponse("", response);
     }
 
     @PostMapping("/updateshirtsize")

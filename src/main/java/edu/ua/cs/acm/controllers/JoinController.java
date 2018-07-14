@@ -6,6 +6,7 @@ import edu.ua.cs.acm.email.ListservCommand;
 import edu.ua.cs.acm.messages.JoinMessage;
 import edu.ua.cs.acm.services.EmailService;
 import edu.ua.cs.acm.services.MemberService;
+import edu.ua.cs.acm.services.CommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+
 /**
  * Created by jzarobsky on 9/4/17.
  */
@@ -24,13 +26,14 @@ import com.google.gson.GsonBuilder;
 public class JoinController {
 
     private static final Logger LOG = LoggerFactory.getLogger(JoinController.class);
-    private static final Gson objGson = new GsonBuilder().setPrettyPrinting().create();
     private final EmailService emailService;
     private final MemberService memberService;
+    private final CommonService commonService;
 
-    public JoinController(EmailService emailService, MemberService memberService) {
+    public JoinController(EmailService emailService, MemberService memberService, CommonService commonService) {
         this.emailService = emailService;
         this.memberService = memberService;
+        this.commonService = commonService;
     }
 
     private boolean memberIsAlreadyAdded(String email) {
@@ -73,31 +76,25 @@ public class JoinController {
         return true;
     }
 
-    private ResponseEntity<Object> createJoinResponse(String errorMessage, Map<String, Object> response) {
-        response.put("errorMessage", errorMessage);
-        return new ResponseEntity<>(objGson.toJson(response), HttpStatus.OK);
-    }
-
     @CrossOrigin
     @PostMapping()
     public ResponseEntity<Object> joinAcm(@RequestBody JoinMessage message) {
-
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
         if (memberIsAlreadyAdded(message.getEmail())) {
-            return createJoinResponse("A member with the submitted email is already added.", response);
+            return commonService.createResponse("A member with the submitted email is already added.", response);
         }
         if (!addMemberToDb(message)) {
-            return createJoinResponse("The member could not be saved. Email acm-off@listserv.ua.edu for help.", response);
+            return commonService.createResponse("The member could not be saved. Email acm-off@listserv.ua.edu for help.", response);
         }
         if (!sendWelcomeEmail(message)) {
-            return createJoinResponse("There was an error sending the welcome email. Email acm-off@listserv.ua.edu for help.", response);
+            return commonService.createResponse("There was an error sending the welcome email. Email acm-off@listserv.ua.edu for help.", response);
         }
         if (!sendListservAddCommand(message)) {
-            return createJoinResponse("There was an error adding the member to the mailing list. Email acm-off@listserv.ua.edu for help.", response);
+            return commonService.createResponse("There was an error adding the member to the mailing list. Email acm-off@listserv.ua.edu for help.", response);
         }
         response.put("success", true);
-        return createJoinResponse("", response);
+        return commonService.createResponse("", response);
     }
 
 }
