@@ -153,7 +153,7 @@ public class MemberController {
         System.out.print("Received payment validation response...");
         System.out.print(validateResponse);
 
-        if (validateResponse != "no" && response.equals(message.getDatePaid())) {
+        if (validateResponse != "no" && validateResponse.equals(message.getDatePaid())) {
 
             Member payingMember = memberService.getByCrimsonEmail(message.getEmail());
             int semesterId = semesterService.currentSemesterId();
