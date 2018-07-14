@@ -148,6 +148,9 @@ public class MemberController {
         HttpEntity<String> entity = new HttpEntity<>(requestJson,headers);
         String validateResponse = restTemplate.postForObject(url, entity, String.class);
 
+        LOG.debug("Received payment validation response...");
+        LOG.debug(validateResponse);
+
         if (validateResponse != "no" && response.equals(message.getDatePaid())) {
 
             Member payingMember = memberService.getByCrimsonEmail(message.getEmail());
@@ -185,10 +188,8 @@ public class MemberController {
                 response.put("success", true);
                 return commonService.createResponse("", response);
             }
-            response.put("noUser", true);
             return commonService.createResponse("No user matching " + message.getEmail() + " was found.", response);
         }
-        response.put("notValid", true);
         return commonService.createResponse("The provided payment information was not determined to be valid.", response);
     }
 
