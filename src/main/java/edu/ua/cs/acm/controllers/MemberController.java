@@ -75,7 +75,7 @@ public class MemberController {
         }
         Member member = memberService.getByCrimsonEmail(message.getEmail());
         if (member == null) {
-            return commonService.createResponse(member.getCrimsonEmail() + " is not linked to an existing member. Please join before paying dues.", response);
+            return commonService.createResponse(message.getEmail() + " is not linked to an existing member. Please join before paying dues.", response);
         }
         if (currentSemester.getMembers().contains(member)) {
             return commonService.createResponse((member.getCrimsonEmail() + " has already paid for the current semester."), response);
