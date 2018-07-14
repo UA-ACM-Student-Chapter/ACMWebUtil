@@ -22,4 +22,8 @@ public class CommonServiceImpl implements CommonService {
         return new ResponseEntity<>(objGson.toJson(response), HttpStatus.OK);
     }
 
+    public boolean validateSecret(String secretKey) {
+        return secretKey.equals(System.getenv("SECRET_KEY"));
+    }
+
 }

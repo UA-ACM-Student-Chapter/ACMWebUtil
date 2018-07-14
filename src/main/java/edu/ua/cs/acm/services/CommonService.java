@@ -8,4 +8,5 @@ import java.util.Map;
  */
 public interface CommonService {
     ResponseEntity<Object> createResponse(String errorMessage, Map<String, Object> response);
+    boolean validateSecret(String secretKey);
 }

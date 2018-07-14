@@ -1,7 +1,6 @@
 package edu.ua.cs.acm.controllers;
 
 import edu.ua.cs.acm.domain.Member;
-import edu.ua.cs.acm.domain.MemberSemesterLink;
 import edu.ua.cs.acm.domain.Semester;
 import edu.ua.cs.acm.messages.IsPaidMessage;
 import edu.ua.cs.acm.messages.UpdateShirtSizeMessage;
@@ -11,6 +10,8 @@ import edu.ua.cs.acm.services.MemberService;
 import edu.ua.cs.acm.services.SemesterService;
 import edu.ua.cs.acm.services.EmailService;
 import edu.ua.cs.acm.email.PaymentConfirmationEmailMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +20,6 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 /**
  * Created by jzarobsky on 11/21/17.
@@ -29,6 +28,7 @@ import com.google.gson.GsonBuilder;
 @RequestMapping("/member")
 public class MemberController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JoinController.class);
     private final MemberService memberService;
     private final SemesterService semesterService;
     private final EmailService emailService;
@@ -50,18 +50,26 @@ public class MemberController {
 
     @GetMapping("/unpaid")
     public ResponseEntity<Object> unpaidMembers(@RequestHeader String secretKey) {
-        if (secretKey.equals(System.getenv("SECRET_KEY"))) {
-            return ResponseEntity.ok(memberService.unpaidMembers(semesterService.getCurrentSemester()));
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        if (commonService.validateSecret(secretKey)) {
+            response.put("unpaid", memberService.unpaidMembers(semesterService.getCurrentSemester()));
+            response.put("success", true);
+            return commonService.createResponse("", response);
         }
-        return ResponseEntity.ok("no secret key, no secret knowledge");
+        return commonService.createResponse("no secret key, no secret knowledge", response);
     }
 
     @GetMapping("/all")
     public ResponseEntity<Object> allMembers(@RequestHeader String secretKey) {
-        if (secretKey.equals(System.getenv("SECRET_KEY"))) {
-            return ResponseEntity.ok(memberService.allMembers());
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        if (commonService.validateSecret(secretKey)) {
+            response.put("all", memberService.allMembers());
+            response.put("success", true);
+            return commonService.createResponse("", response);
         }
-        return ResponseEntity.ok("no secret key, no secret knowledge");
+        return commonService.createResponse("no secret key, no secret knowledge", response);
     }
 
     @CrossOrigin
@@ -86,41 +94,49 @@ public class MemberController {
 
     @PostMapping("/updateshirtsize")
     public ResponseEntity<Object> updateShirtSize(@RequestBody UpdateShirtSizeMessage message) throws URISyntaxException {
-        if (message.getSecretKey().equals(System.getenv("SECRET_KEY"))) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        if (commonService.validateSecret(message.getSecretKey())) {
             Member memberToUpdate = memberService.getByCrimsonEmail(message.getEmail());
-
             if (memberToUpdate != null) {
                 memberService.updateShirtSize(memberToUpdate, message.getNewShirtSize());
+                response.put("success", true);
+                return commonService.createResponse("", response);
             }
-
-            return ResponseEntity.ok("updated");
+            return commonService.createResponse(message.getEmail() + " was not found.", response);
         }
-        return ResponseEntity.ok("no secret key, no secret knowledge");
+        return commonService.createResponse("no secret key, no secret knowledge", response);
     }
 
     @PostMapping("/ispaid")
     public Object memberIsPaid(@RequestBody IsPaidMessage message) {
-        if (message.getSecretKey().equals(System.getenv("SECRET_KEY"))) {
-            Member m = memberService.getByCrimsonEmail(message.getEmail());
-            Integer paidMember = null;
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        if (commonService.validateSecret(message.getSecretKey())) {
+            Member member = memberService.getByCrimsonEmail(message.getEmail());
+            boolean memberHasPaid;
 
-            if (m != null) {
-                paidMember = semesterService.memberIsPaid(m);
+            if (member != null) {
+                memberHasPaid = semesterService.memberIsPaid(member) != null;
             } else {
-                return ResponseEntity.ok("member not found");
+                return commonService.createResponse(message.getEmail() + " was not found", response);
             }
-            if (paidMember == null) {
-                return ResponseEntity.ok("not paid");
+            if (!memberHasPaid) {
+                response.put("success", true);
+                response.put("hasPaid", false);
+                return commonService.createResponse("", response);
             }
-            else {
-                return ResponseEntity.ok("paid");
-            }
+            response.put("success", true);
+            response.put("hasPaid", true);
+            return commonService.createResponse("", response);
         }
-        return "no secret key, no secret knowledge";
+        return commonService.createResponse("no secret key, no secret knowledge", response);
     }
 
     @PostMapping("/payforsemester")
     public ResponseEntity<Object> payForSemester(@RequestBody PayForSemesterMessage message) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -129,10 +145,10 @@ public class MemberController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<String> entity = new HttpEntity<String>(requestJson,headers);
-        String response = restTemplate.postForObject(url, entity, String.class);
+        HttpEntity<String> entity = new HttpEntity<>(requestJson,headers);
+        String validateResponse = restTemplate.postForObject(url, entity, String.class);
 
-        if (response != "no" && response.equals(message.getDatePaid())) {
+        if (validateResponse != "no" && response.equals(message.getDatePaid())) {
 
             Member payingMember = memberService.getByCrimsonEmail(message.getEmail());
             int semesterId = semesterService.currentSemesterId();
@@ -150,13 +166,30 @@ public class MemberController {
                     paymentType = "Venmo";
                     ccNumber = message.getLast4();
                 }
-                System.out.println(message.getPaymentType());
-                emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), message.getDatePaid(), "$10", paymentType, message.getPurchaseID(), ccNumber, message.getCardType()));
-                return new ResponseEntity<>("{\"id\":\"" + message.getPurchaseID() + "\", \"email\":\"" + message.getEmail() + "\", \"name\":\"" + payingMember.getFirstName() + " " + payingMember.getLastName() + "\", \"paymentType\":\"" + paymentType + "\", \"cardType\":\"" + message.getCardType() + "\", \"hiddenCCNumber\":\"" + ccNumber + "\", \"date\": \"" + message.getDatePaid() + "\"}", HttpStatus.OK);
+
+                try {
+                    emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), message.getDatePaid(), "$10", paymentType, message.getPurchaseID(), ccNumber, message.getCardType()));
+                }
+                catch (Exception ex) {
+                    LOG.error(ex.getMessage());
+                    LOG.error("Email confirmation for payment was unable to be sent for " + payingMember.toString());
+                }
+
+                response.put("id", message.getPurchaseID());
+                response.put("email", message.getEmail());
+                response.put("name", payingMember.getFirstName() + " " + payingMember.getLastName());
+                response.put("paymentType", paymentType);
+                response.put("cardType", message.getCardType());
+                response.put("hiddenCCNumber", ccNumber);
+                response.put("date", message.getDatePaid());
+                response.put("success", true);
+                return commonService.createResponse("", response);
             }
-            return new ResponseEntity<>("{\"noUser\": \"true\"}", HttpStatus.OK);
+            response.put("noUser", true);
+            return commonService.createResponse("No user matching " + message.getEmail() + " was found.", response);
         }
-        else return new ResponseEntity<>("{\"notValid\": \"true\"}", HttpStatus.OK);
+        response.put("notValid", true);
+        return commonService.createResponse("The provided payment information was not determined to be valid.", response);
     }
 
 }
