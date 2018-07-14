@@ -135,6 +135,8 @@ public class MemberController {
 
     @PostMapping("/payforsemester")
     public ResponseEntity<Object> payForSemester(@RequestBody PayForSemesterMessage message) {
+        System.out.print("Does logging work?");
+        LOG.debug("Does the other type of logging work?");
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
 
