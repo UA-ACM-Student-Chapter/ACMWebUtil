@@ -85,7 +85,7 @@ public class JoinController {
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
         if (memberIsAlreadyAdded(message.getEmail())) {
-            return createJoinResponse("The member is already added", response);
+            return createJoinResponse("A member with the submitted email is already added.", response);
         }
         if (!addMemberToDb(message)) {
             return createJoinResponse("The member could not be saved. Email acm-off@listserv.ua.edu for help.", response);
