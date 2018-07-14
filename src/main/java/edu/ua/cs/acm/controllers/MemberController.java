@@ -148,8 +148,8 @@ public class MemberController {
         HttpEntity<String> entity = new HttpEntity<>(requestJson,headers);
         String validateResponse = restTemplate.postForObject(url, entity, String.class);
 
-        LOG.debug("Received payment validation response...");
-        LOG.debug(validateResponse);
+        System.out.print("Received payment validation response...");
+        System.out.print(validateResponse);
 
         if (validateResponse != "no" && response.equals(message.getDatePaid())) {
 
