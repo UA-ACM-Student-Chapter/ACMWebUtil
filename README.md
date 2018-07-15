@@ -3,6 +3,10 @@
 ## Documentation
 https://ua-acm-student-chapter.github.io/backend_docs.html
 
+## Use it for your student organization
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+__Deployment Guide__ (*coming soon*)
+
 ## About
 **What the heck is this for?**
 
