@@ -79,7 +79,7 @@ public class JoinController {
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
         if (memberIsAlreadyAdded(message.getEmail())) {
-            return commonService.createResponse(message.getEmail() + "is already a member", response);
+            return commonService.createResponse(message.getEmail() + " is already a member", response);
         }
         if (!addMemberToDb(message)) {
             return commonService.createResponse("The member could not be saved. Email acm-off@listserv.ua.edu for help.", response);
