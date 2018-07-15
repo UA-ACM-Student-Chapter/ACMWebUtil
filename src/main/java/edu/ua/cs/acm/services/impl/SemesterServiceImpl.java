@@ -36,7 +36,7 @@ public class SemesterServiceImpl implements SemesterService {
 
     @Override
     public Semester getCurrentSemester() {
-        return this.semesterRepository.findByStartDateBeforeAndEndDateAfter(LocalDateTime.now(), LocalDateTime.now());
+        return this.semesterRepository.findOne(this.semesterRepository.currentSemesterId());
     }
 
     @Override

@@ -15,7 +15,7 @@ import java.util.Map;
 @Service
 public class CommonServiceImpl implements CommonService {
 
-    private static final Gson objGson = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson objGson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
 
     public ResponseEntity<Object> createResponse(String errorMessage, Map<String, Object> response) {
         response.put("errorMessage", errorMessage);

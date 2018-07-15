@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.google.gson.annotations.Expose;
 import edu.ua.cs.acm.converters.LocalDateTimeConverter;
 
 import javax.persistence.*;
@@ -25,26 +26,32 @@ public class Member implements Serializable {
 
     @Id
     @Column(name = "member_id")
+    @Expose
     @SequenceGenerator(name = "member_id_sequence", sequenceName = "member_id_sequence")
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "member_id_sequence")
     private int id;
 
     @Column(name="first_name")
+    @Expose
     private String firstName;
 
     @Column(name="last_name")
+    @Expose
     private String lastName;
 
     @Column(name="shirt_size")
+    @Expose
     private String shirtSize;
 
     @Column(name="birthday")
+    @Expose
     @Convert(converter = LocalDateTimeConverter.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime birthday;
 
     @Column(name="crimson_email")
+    @Expose
     private String crimsonEmail;
 
     @ManyToMany(cascade = CascadeType.ALL)

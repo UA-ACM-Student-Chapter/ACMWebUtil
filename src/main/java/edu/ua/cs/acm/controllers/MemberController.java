@@ -135,8 +135,6 @@ public class MemberController {
 
     @PostMapping("/payforsemester")
     public ResponseEntity<Object> payForSemester(@RequestBody PayForSemesterMessage message) {
-        System.out.print("Does logging work?");
-        LOG.debug("Does the other type of logging work?");
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
 
@@ -149,9 +147,6 @@ public class MemberController {
 
         HttpEntity<String> entity = new HttpEntity<>(requestJson,headers);
         String validateResponse = restTemplate.postForObject(url, entity, String.class);
-
-        System.out.print("Received payment validation response...");
-        System.out.print(validateResponse);
 
         if (validateResponse != "no" && validateResponse.equals(message.getDatePaid())) {
 

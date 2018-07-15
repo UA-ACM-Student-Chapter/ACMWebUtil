@@ -1,9 +1,12 @@
 package edu.ua.cs.acm.controllers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import edu.ua.cs.acm.domain.Semester;
 import edu.ua.cs.acm.domain.Member;
 import edu.ua.cs.acm.email.DueReminderEmailMessage;
 import edu.ua.cs.acm.messages.AddSemesterMessage;
+import edu.ua.cs.acm.services.CommonService;
 import edu.ua.cs.acm.services.EmailService;
 import edu.ua.cs.acm.services.SemesterService;
 import edu.ua.cs.acm.services.MemberService;
@@ -31,58 +34,35 @@ import java.util.HashMap;
 @RequestMapping("/semester")
 public class SemesterController {
 
+    private static final Gson objGson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
     private final SemesterService semesterService;
     private final MemberService memberService;
-    private final String authKey;
     private final EmailService emailService;
+    private final CommonService commonService;
 
     @Autowired
-    public SemesterController(SemesterService semesterService, MemberService memberService, @Value("${authorization-key}") String authKey, EmailService emailService) {
+    public SemesterController(SemesterService semesterService, MemberService memberService, EmailService emailService, CommonService commonService) {
         this.semesterService = semesterService;
         this.memberService = memberService;
-        this.authKey = authKey;
         this.emailService = emailService;
+        this.commonService = commonService;
     }
 
-    @GetMapping()
-    public ResponseEntity<Semester> getSemester() {
-        return ResponseEntity.ok(semesterService.getCurrentSemester());
-    }
-
-    @PostMapping()
-    public ResponseEntity<Semester> createSemester(@RequestBody Semester semester,
-                                                   @RequestHeader(name="Authorization", required = true) String authorization) {
-
-        if(!authKey.equals(authorization)) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
-        try {
-            semesterService.saveSemester(semester);
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().build();
+    @GetMapping("/getCurrentSemester")
+    public ResponseEntity<Object> getCurrentSemester(@RequestHeader String secretKey) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        if (commonService.validateSecret(secretKey)) {
+            response.put("data",  semesterService.getCurrentSemester());
+            response.put("success", true);
+            return commonService.createResponse("", response);
         }
-        return ResponseEntity.ok(semester);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Semester> updateSemester(@RequestBody Semester semester,
-                                                   @PathVariable("id") int id,
-                                                   @RequestHeader(name="Authorization", required=true) String authorization
-    ) {
-        if(!authKey.equals(authorization)) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
-        semester.setId(id);
-        try {
-            semesterService.saveSemester(semester);
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok(semester);
+        return commonService.createResponse("No secret key, no secret knowledge", response);
     }
 
     @RequestMapping(value = "/scheduledreminder", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public HttpEntity scheduledReminder(@RequestParam Integer scheduled_day, @RequestParam String secret_key) {
-        System.out.println("got a schedule request");
-        if (secret_key.equals(System.getenv().get("SECRET_KEY"))) {
+    public HttpEntity scheduledReminder(@RequestParam Integer scheduled_day, @RequestParam String secretKey) {
+        if (commonService.validateSecret(secretKey)) {
             Calendar c = Calendar.getInstance();
             Integer dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
             if (scheduled_day == dayOfWeek && LocalDateTime.now().isBefore(semesterService.currentDueDate())) {
@@ -94,23 +74,25 @@ public class SemesterController {
             }
             return new HttpEntity("nothing sent; past due date");
         }
-        return new HttpEntity("no secret key, no secret knowledge");
+        return new HttpEntity("Wrong secret key");
     }
 
     @GetMapping("/unpaiddetails")
     public Object unpaidDetails(@RequestHeader String secretKey) {
-        if (secretKey.equals(System.getenv("SECRET_KEY"))) {
+        if (commonService.validateSecret(secretKey)) {
             HashMap<String, Object> response = new HashMap<>();
             response.put("dueDate", semesterService.currentDueDate());
             response.put("unpaidMembers", memberService.unpaidMembers(semesterService.getCurrentSemester()));
             return response;
         }
-        return "no secret key, no secret knowledge";
+        return "Wrong secret key";
     }
 
     @PostMapping("/add")
-    public ResponseEntity addSemester(@RequestBody AddSemesterMessage request) {
-        if (request.getSecretKey().equals(System.getenv("SECRET_KEY"))) {
+    public ResponseEntity<Object> addSemester(@RequestHeader String secretKey, @RequestBody AddSemesterMessage request) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        if (commonService.validateSecret(secretKey)) {
             LocalDateTime startDate = LocalDate.parse(request.getStartDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
             LocalDateTime endDate = LocalDate.parse(request.getEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
             LocalDateTime dueDate = LocalDate.parse(request.getDueDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
@@ -119,11 +101,12 @@ public class SemesterController {
                 semesterService.saveSemester(newSemester);
             }
             catch (Exception ex){
-                return ResponseEntity.ok("Semester could not be added.");
+                return commonService.createResponse("Semester could not be added", response);
             }
-            return ResponseEntity.ok("Added " + request.getStartDate() + " to " + request.getEndDate() + " as semester");
+            response.put("success", true);
+            return commonService.createResponse("", response);
         }
-        return ResponseEntity.ok("no secret key, no secret knowledge");
+        return commonService.createResponse("Bad secret key", response);
     }
 
 }

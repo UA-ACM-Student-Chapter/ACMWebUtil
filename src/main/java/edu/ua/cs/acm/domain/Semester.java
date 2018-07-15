@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.google.gson.annotations.Expose;
 import edu.ua.cs.acm.converters.LocalDateTimeConverter;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -29,24 +30,28 @@ public class Semester implements Serializable {
 
     @Id
     @Column(name="semester_id")
+    @Expose
     @SequenceGenerator(name="semester_id_sequence", sequenceName = "semester_id_sequence")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "semester_id_sequence")
     private int id;
 
 
     @Column(name="start_date")
+    @Expose
     @JsonSerialize(using = ToStringSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime startDate;
 
     @Column(name="end_date")
+    @Expose
     @JsonSerialize(using = ToStringSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime endDate;
 
     @Column(name="due_date")
+    @Expose
     @JsonSerialize(using = ToStringSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @Convert(converter = LocalDateTimeConverter.class)

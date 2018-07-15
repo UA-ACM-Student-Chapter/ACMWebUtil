@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.google.gson.annotations.Expose;
 import edu.ua.cs.acm.converters.LocalDateTimeConverter;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -27,9 +28,11 @@ public class MemberSemesterLink implements Serializable{
 
     @Id
     @Column(name="member_id")
+    @Expose
     private int member_id;
 
     @Column(name="semester_id")
+    @Expose
     private int semester_id;
 
     protected MemberSemesterLink() {
