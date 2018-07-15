@@ -19,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,11 +54,15 @@ public class MemberController {
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
         if (commonService.validateSecret(secretKey)) {
-            response.put("unpaid", memberService.unpaidMembers(semesterService.getCurrentSemester()));
-            response.put("success", true);
-            return commonService.createResponse("", response);
+            List<Member> unpaidMembers = memberService.unpaidMembers(semesterService.getCurrentSemester());
+            if (unpaidMembers != null) {
+                response.put("unpaid", unpaidMembers);
+                response.put("success", true);
+                return commonService.createResponse("", response);
+            }
+            return commonService.createResponse("There is no active semester, so no member is considered unpaid", response);
         }
-        return commonService.createResponse("no secret key, no secret knowledge", response);
+        return commonService.createResponse("Wrong secret key", response);
     }
 
     @GetMapping("/all")
@@ -69,7 +74,7 @@ public class MemberController {
             response.put("success", true);
             return commonService.createResponse("", response);
         }
-        return commonService.createResponse("no secret key, no secret knowledge", response);
+        return commonService.createResponse("Wrong secret key", response);
     }
 
     @CrossOrigin
@@ -105,7 +110,7 @@ public class MemberController {
             }
             return commonService.createResponse(message.getEmail() + " was not found.", response);
         }
-        return commonService.createResponse("no secret key, no secret knowledge", response);
+        return commonService.createResponse("Wrong secret key", response);
     }
 
     @PostMapping("/ispaid")
@@ -130,7 +135,7 @@ public class MemberController {
             response.put("hasPaid", true);
             return commonService.createResponse("", response);
         }
-        return commonService.createResponse("no secret key, no secret knowledge", response);
+        return commonService.createResponse("Wrong secret key", response);
     }
 
     @PostMapping("/payforsemester")

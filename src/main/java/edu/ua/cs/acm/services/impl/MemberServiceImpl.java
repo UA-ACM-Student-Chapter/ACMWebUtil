@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,7 +53,10 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public List<Member> unpaidMembers(Semester semester) {
-        return memberRepository.unpaidForSemester(semester.getId());
+        if (semester != null) {
+            return memberRepository.unpaidForSemester(semester.getId());
+        }
+        return null;
     }
 
     @Override
