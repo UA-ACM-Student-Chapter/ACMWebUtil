@@ -16,7 +16,7 @@ public interface SemesterRepository extends CrudRepository <Semester, Integer> {
     Semester findByStartDateBeforeAndEndDateAfter(LocalDateTime startDate, LocalDateTime endTime);
 
     @Query(value = "SELECT semester_id FROM Semester WHERE CURRENT_TIMESTAMP <= end_date AND CURRENT_TIMESTAMP > start_date", nativeQuery = true)
-    int currentSemesterId();
+    Integer currentSemesterId();
 
     @Query(value = "SELECT due_date FROM Semester WHERE CURRENT_TIMESTAMP <= end_date AND CURRENT_TIMESTAMP > start_date", nativeQuery = true)
     LocalDateTime currentDueDate();

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public interface SemesterService {
     Semester saveSemester(Semester semester) throws Exception;
     Semester getCurrentSemester();
-    int currentSemesterId();
+    Integer currentSemesterId();
     LocalDateTime currentDueDate();
     Integer memberIsPaid(Member m);
 //    void deleteSemester(Semester semester);

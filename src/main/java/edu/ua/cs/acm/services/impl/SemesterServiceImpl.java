@@ -36,7 +36,10 @@ public class SemesterServiceImpl implements SemesterService {
 
     @Override
     public Semester getCurrentSemester() {
-        return this.semesterRepository.findOne(this.semesterRepository.currentSemesterId());
+        Integer currentSemsterId = this.semesterRepository.currentSemesterId();
+        if (currentSemsterId == null)
+            return null;
+        return this.semesterRepository.findOne(currentSemsterId);
     }
 
     @Override
@@ -45,7 +48,7 @@ public class SemesterServiceImpl implements SemesterService {
     }
 
     @Override
-    public int currentSemesterId() {
+    public Integer currentSemesterId() {
         return this.semesterRepository.currentSemesterId();
     }
 
