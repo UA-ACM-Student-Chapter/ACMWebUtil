@@ -1,4 +1,5 @@
 # ACM Web Utility
+A backend for managing organization members and supporting payments for dues.
 
 ## Documentation
 https://ua-acm-student-chapter.github.io/backend_docs.html
