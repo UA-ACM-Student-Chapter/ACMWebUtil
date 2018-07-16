@@ -12,11 +12,11 @@ import java.util.Date;
  * Created by jzarobsky on 11/21/17.
  */
 public interface SemesterRepository extends CrudRepository <Semester, Integer> {
-    @Query(value = "SELECT * FROM Semester WHERE ?1 <= end_date AND ?2 > start_date", nativeQuery = true)
-    Semester findByStartDateBeforeAndEndDateAfter(LocalDateTime startDate, LocalDateTime endTime);
+    @Query(value = "SELECT * FROM Semester WHERE to_timestamp(cast(?1 as TEXT), 'YYYY-MM-DD') < end_date AND to_timestamp(cast(?2 as TEXT), 'YYYY-MM-DD') > start_date", nativeQuery = true)
+    Semester findByStartDateBeforeAndEndDateAfter(String startDate, String endTime);
 
-    @Query(value = "SELECT semester_id FROM Semester WHERE CURRENT_TIMESTAMP <= end_date AND CURRENT_TIMESTAMP > start_date", nativeQuery = true)
-    Integer currentSemesterId();
+    @Query(value = "SELECT * FROM Semester WHERE CURRENT_TIMESTAMP <= end_date AND CURRENT_TIMESTAMP > start_date", nativeQuery = true)
+    Semester currentSemester();
 
     @Query(value = "SELECT due_date FROM Semester WHERE CURRENT_TIMESTAMP <= end_date AND CURRENT_TIMESTAMP > start_date", nativeQuery = true)
     LocalDateTime currentDueDate();

@@ -1,12 +1,16 @@
 package edu.ua.cs.acm.services.impl;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import edu.ua.cs.acm.services.CommonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -15,7 +19,16 @@ import java.util.Map;
 @Service
 public class CommonServiceImpl implements CommonService {
 
-    private static final Gson objGson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
+    private static final Gson objGson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().registerTypeAdapter(LocalDateTime.class, new JsonSerializer<LocalDateTime>() {
+
+            @Override
+            public JsonElement serialize(LocalDateTime localDateTime, Type type, JsonSerializationContext jsonSerializationContext) {
+                Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+                Date date = Date.from(instant);
+                return new JsonPrimitive(date.toString());
+            }
+
+    }).create();
 
     public ResponseEntity<Object> createResponse(String errorMessage, Map<String, Object> response) {
         response.put("errorMessage", errorMessage);

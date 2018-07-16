@@ -77,22 +77,11 @@ public class SemesterController {
         return new HttpEntity("Wrong secret key");
     }
 
-    @GetMapping("/unpaiddetails")
-    public Object unpaidDetails(@RequestHeader String secretKey) {
-        if (commonService.validateSecret(secretKey)) {
-            HashMap<String, Object> response = new HashMap<>();
-            response.put("dueDate", semesterService.currentDueDate());
-            response.put("unpaidMembers", memberService.unpaidMembers(semesterService.getCurrentSemester()));
-            return response;
-        }
-        return "Wrong secret key";
-    }
-
     @PostMapping("/add")
-    public ResponseEntity<Object> addSemester(@RequestHeader String secretKey, @RequestBody AddSemesterMessage request) {
+    public ResponseEntity<Object> addSemester(@RequestBody AddSemesterMessage request) {
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
-        if (commonService.validateSecret(secretKey)) {
+        if (commonService.validateSecret(request.getSecretKey())) {
             LocalDateTime startDate = LocalDate.parse(request.getStartDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
             LocalDateTime endDate = LocalDate.parse(request.getEndDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
             LocalDateTime dueDate = LocalDate.parse(request.getDueDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();

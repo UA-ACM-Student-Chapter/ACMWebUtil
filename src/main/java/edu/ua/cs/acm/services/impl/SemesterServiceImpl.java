@@ -23,9 +23,9 @@ public class SemesterServiceImpl implements SemesterService {
     @Override
     public Semester saveSemester(Semester semester) throws Exception {
         Semester semester1 =
-                semesterRepository.findByStartDateBeforeAndEndDateAfter(semester.getStartDate(), semester.getStartDate());
+                semesterRepository.findByStartDateBeforeAndEndDateAfter(semester.getStartDate().toLocalDate().toString(), semester.getStartDate().toLocalDate().toString());
         Semester semester2 =
-                semesterRepository.findByStartDateBeforeAndEndDateAfter(semester.getEndDate(), semester.getEndDate());
+                semesterRepository.findByStartDateBeforeAndEndDateAfter(semester.getEndDate().toLocalDate().toString(), semester.getEndDate().toLocalDate().toString());
 
         if(semester1 != null || semester2 != null) {
             throw new Exception("Semesters cannot have overlapping dates");
@@ -36,10 +36,7 @@ public class SemesterServiceImpl implements SemesterService {
 
     @Override
     public Semester getCurrentSemester() {
-        Integer currentSemsterId = this.semesterRepository.currentSemesterId();
-        if (currentSemsterId == null)
-            return null;
-        return this.semesterRepository.findOne(currentSemsterId);
+        return this.semesterRepository.currentSemester();
     }
 
     @Override
@@ -49,19 +46,18 @@ public class SemesterServiceImpl implements SemesterService {
 
     @Override
     public Integer currentSemesterId() {
-        return this.semesterRepository.currentSemesterId();
+        Semester currentSemester = this.semesterRepository.currentSemester();
+        if (currentSemester != null) {
+            return currentSemester.getId();
+        }
+        return null;
     }
 
     @Override
     public Integer memberIsPaid(Member m) {
         Integer memberID = m.getId();
-        Integer semesterID = semesterRepository.currentSemesterId();
+        Integer semesterID = semesterRepository.currentSemester().getId();
 
         return semesterRepository.isPaid(memberID, semesterID);
     }
-
-//    @Override
-//    public void deleteSemester(Semester semester) {
-//        this.semesterRepository.delete(semester);
-//    }
 }
