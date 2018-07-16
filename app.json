@@ -1,18 +1,24 @@
 {
   "name": "acmwebutil",
-  "description": "This small API powers all of the ACM automated magic",
+  "description": "This small API powers member and due management for UA student organizations",
   "repository": "https://github.com/UA-ACM-Student-Chapter/ACMWebUtil",
   "image": "heroku/java",
   "addons": [ "mongolab:sandbox" ],
   "env" : {
     "FROM_EMAIL" : {
-      "description" : "The from email address"
+      "description" : "The from email address for emails to members (must have a registered account with listserv.ua.edu)"
     },
     "FROM_ALIAS" : {
-      "description": "The email alias to display this string"
+      "description": "The email alias (name) that displays in the headers of emails to members"
     },
-    "SMTP_PASSWORD" : {
-      "description" : "SMTP Password to use for email services"
+    "LISTSERV_PASSWORD" : {
+      "description" : "The password associated with the from email for Listserv"
+    },
+    "SENDGRID_API_KEY" : {
+      "description": "The API key provided by Sendgrid for sending mass emails"
+    },
+    "SECRET_KEY" : {
+      "description": "The authorization key used for protected API calls (preferable use a randomly generated, long key)"
     }
   }
 }
