@@ -32,6 +32,7 @@ public class ListservCommand extends DirectEmailMessage {
         model.put("lastName", getLastName());
         model.put("email", getEmail());
         model.put("command", getCommand());
+        model.put("listservListName", System.getenv("LISTSERV_LIST_NAME"));
         model.put("listservPassword", System.getenv("LISTSERV_PASSWORD"));
         return renderTemplate(TEMPLATE_NAME, model);
     }

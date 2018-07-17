@@ -8,22 +8,22 @@
 <body>
 <p>Hi, ${firstName}!</p>
 <p>
-    Thank you for your interest in ACM. We're really excited to have you as a part of our organization!
+    Thank you for your interest in ${orgName}. We're really excited to have you as a part of our organization!
 </p>
 <p>
     Below you'll find some valuable links to get connected to our organization.
 </p>
 <ul>
     <li>
-        <a href="http://acm.cs.ua.edu">The ACM Website</a>
+        <a href="${orgWebsite}">The ${orgName} Website</a>
     </li>
     #if( $includeSlack )
         <li>
-            <a href="https://join.slack.com/t/unofficialuacs/shared_invite/enQtMzk3OTU1ODEyNTc4LTI1ZGJhMmNmMzQyM2I3M2MzZmE0ZmUwZDU2MDk4M2M0Y2NmMjkwNmVjZmE3NDBkYTcxNTI4OWU2ODQ2OWFlYzk">Join the (Unofficial) UA CS Slack</a>
+            <a href="${slackInviteLink}">Join the ${slackTeamName} Slack</a>
         </li>
     #end
 </ul>
-<p>If you have any other questions, feel free to <a href="mailto:acm-off@listserv.ua.edu">reach out to us!</a></p>
-<p>The UA ACM Exec Board</p>
+<p>If you have any other questions, feel free to <a href="mailto:${officersEmail}">reach out to us!</a></p>
+<p>${emailSignature}</p>
 </body>
 </html>

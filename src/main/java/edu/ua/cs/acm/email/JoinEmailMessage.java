@@ -30,6 +30,10 @@ public class JoinEmailMessage extends DirectEmailMessage {
         model.put("lastName", getLastName());
         model.put("email", getToEmails()[0].split("@")[0]);
         model.put("includeSlack", includeSlackRegistration);
+        model.put("orgName", System.getenv("ORG_NAME"));
+        model.put("slackInviteLink", System.getenv("SLACK_INVITE_LINK"));
+        model.put("slackTeamName", System.getenv("SLACK_TEAM_NAME"));
+        model.put("officersEmail", System.getenv("OFFICERS_EMAIL"));
 
         return renderTemplate("join.html", model);
     }

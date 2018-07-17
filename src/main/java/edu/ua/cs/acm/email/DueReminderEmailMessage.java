@@ -28,6 +28,7 @@ public class DueReminderEmailMessage extends DirectEmailMessage {
 
         model.put("firstName", getFirstName());
         model.put("dueDate", getDueDate());
+        model.put("orgWebsite", System.getenv("ORG_WEBSITE"));
         return renderTemplate(TEMPLATE_NAME, model);
     }
 

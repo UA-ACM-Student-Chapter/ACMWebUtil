@@ -43,6 +43,9 @@ public class PaymentConfirmationEmailMessage extends DirectEmailMessage {
         model.put("purchaseID", getPurchaseID());
         model.put("hiddenCCNumber", getHiddenCCNumber());
         model.put("cardType", getCardType());
+        model.put("orgAddress", System.getenv("ORG_ADDRESS"));
+        model.put("officersEmail", System.getenv("OFFICERS_EMAIL"));
+        model.put("currentSemesterName", System.getenv("CURRENT_SEMESTER_NAME"));
         return renderTemplate(TEMPLATE_NAME, model);
     }
 
