@@ -10,7 +10,7 @@
     },
     "FROM_ALIAS" : {
       "description": "The email alias (name) that displays in the headers of emails to members. E.g, 'uaacmweb@gmailc.om'"
-    },,
+    },
     "SENDGRID_API_KEY" : {
       "description": "The API key provided by Sendgrid for sending mass emails"
     },
