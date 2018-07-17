@@ -3,7 +3,7 @@
   "description": "This small API powers member and due management for UA student organizations",
   "repository": "https://github.com/UA-ACM-Student-Chapter/ACMWebUtil",
   "image": "heroku/java",
-  "addons": [ "heroku-postgresql", "adminium", "heroku-scheduler" ],
+  "addons": [ "heroku-postgresql", "adminium", "scheduler" ],
   "env" : {
     "FROM_EMAIL" : {
       "description" : "The from email address for emails to members (must have a registered account with listserv.ua.edu. E.g., 'UA ACM')"
