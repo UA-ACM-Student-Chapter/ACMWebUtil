@@ -6,16 +6,43 @@
   "addons": [ "heroku-postgresql", "adminium", "heroku-scheduler" ],
   "env" : {
     "FROM_EMAIL" : {
-      "description" : "The from email address for emails to members (must have a registered account with listserv.ua.edu)"
+      "description" : "The from email address for emails to members (must have a registered account with listserv.ua.edu. E.g., 'UA ACM')"
     },
     "FROM_ALIAS" : {
-      "description": "The email alias (name) that displays in the headers of emails to members"
-    },
-    "LISTSERV_PASSWORD" : {
-      "description" : "The password associated with the from email for Listserv"
-    },
+      "description": "The email alias (name) that displays in the headers of emails to members. E.g, 'uaacmweb@gmailc.om'"
+    },,
     "SENDGRID_API_KEY" : {
       "description": "The API key provided by Sendgrid for sending mass emails"
+    },
+    "ORG_NAME": {
+      "description": "The name of the organization to display in email communications. E.g., 'UA ACM'"
+    },
+    "CURRENT_SEMESTER_NAME": {
+      "description": "The name to display on receipts for dues for the current semester. E.g., 'Fall 2018'"
+    },
+    "LISTSERV_LIST_NAME": {
+      "description": "The name of the Listserv mailing list. E.g., 'ua-acm'"
+    },
+    "LISTSERV_PASSWORD" : {
+      "description" : "The password associated with the FROM_EMAIL for Listserv"
+    },
+    "OFFICERS_EMAIL": {
+      "description": "The contact email to be shown in error messages, and in email communications. E.g., 'acm-off@listserv.ua.edu'"
+    },
+    "ORG_ADDRESS": {
+      "description": "The address to display at the bottom of receipts. E.g., 'UA Association for Computing Machinery, Tuscaloosa, AL 35487'"
+    },
+    "EMAIL_SIGNATURE": {
+      "description": "The line to use at the end of email communications. E.g., 'The UA ACM Exec Board'"
+    },
+    "SLACK_INVITE_LINK": {
+      "description": "The Slack link to use in the invitation email. E.g., 'https://join.slack.com/...'"
+    },
+    "SLACK_TEAM_NAME": {
+      "description": "The name of the Slack team, E.g., '(Unofficial) UA CS'"
+    },
+    "TZ": {
+      "description": "The timezone to use for dates displayed in emails. Recommended: 'America/Chicago'"
     },
     "SECRET_KEY" : {
       "description": "The authorization key used for protected API calls (preferable use a randomly generated, long key)"
