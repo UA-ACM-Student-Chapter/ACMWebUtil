@@ -9,7 +9,7 @@
       "description" : "The from email address for emails to members (must have a registered account with listserv.ua.edu. E.g., 'UA ACM')"
     },
     "FROM_ALIAS" : {
-      "description": "The email alias (name) that displays in the headers of emails to members. E.g, 'uaacmweb@gmailc.om'"
+      "description": "The email alias (name) that displays in the headers of emails to members. E.g, 'uaacmweb@gmail.com'"
     },
     "SENDGRID_API_KEY" : {
       "description": "The API key provided by Sendgrid for sending mass emails"
