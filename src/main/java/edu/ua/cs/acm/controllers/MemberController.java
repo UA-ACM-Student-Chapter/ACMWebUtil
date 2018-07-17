@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
 import java.net.URISyntaxException;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -175,7 +173,7 @@ public class MemberController {
                 }
 
                 try {
-                    emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), LocalDateTime.now().toLocalDate().toString(), "$10", paymentType, message.getPurchaseID(), ccNumber, message.getCardType()));
+                    emailService.sendMessage(new PaymentConfirmationEmailMessage(payingMember.getFirstName(), payingMember.getLastName(), payingMember.getCrimsonEmail(), message.getDatePaid(), "$10", paymentType, message.getPurchaseID(), ccNumber, message.getCardType()));
                 }
                 catch (Exception ex) {
                     LOG.error(ex.getMessage());
@@ -188,7 +186,7 @@ public class MemberController {
                 response.put("paymentType", paymentType);
                 response.put("cardType", message.getCardType());
                 response.put("hiddenCCNumber", ccNumber);
-                response.put("date", LocalDateTime.now().toLocalDate().toString());
+                response.put("date", message.getDatePaid());
                 response.put("success", true);
                 return commonService.createResponse("", response);
             }
