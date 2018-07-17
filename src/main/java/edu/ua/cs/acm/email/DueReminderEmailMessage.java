@@ -16,7 +16,7 @@ public class DueReminderEmailMessage extends DirectEmailMessage {
     private static final String TEMPLATE_NAME = "due_reminder.html";
 
     public DueReminderEmailMessage(String firstName, String email, LocalDateTime dueDate) {
-        super(email, "[UA ACM] Pay Dues by " + dueDate.getMonthValue() + "-" + dueDate.getDayOfMonth(), 5);
+        super(email, "[" + System.getenv("ORG_NAME") + "] Pay Dues by " + dueDate.getMonthValue() + "-" + dueDate.getDayOfMonth(), 5);
         setHtml(true);
         this.firstName = firstName;
         this.dueDate = dueDate;

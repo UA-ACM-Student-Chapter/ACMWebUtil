@@ -15,7 +15,7 @@ public class JoinEmailMessage extends DirectEmailMessage {
     private static final String TEMPLATE_NAME = "join.html";
 
     public JoinEmailMessage(String firstName, String lastName, String email, boolean includeSlackRegistration) {
-        super(email, "[UA ACM] Welcome to ACM!", 5);
+        super(email, "[" + System.getenv("ORG_NAME") + "] Welcome to " + System.getenv("ORG_NAME") + "!", 5);
         setHtml(true);
         this.firstName = firstName;
         this.lastName = lastName;

@@ -20,7 +20,7 @@ public class PaymentConfirmationEmailMessage extends DirectEmailMessage {
     private static final String TEMPLATE_NAME = "payment_confirmation.html";
 
     public PaymentConfirmationEmailMessage(String firstName, String lastName, String email, String datePaid, String amountPaid, String paymentType, String purchaseID, String hiddenCCNumber, String cardType) {
-        super(email, "[UA ACM] Thanks for Paying Dues!", 5);
+        super(email, "[" + System.getenv("ORG_NAME") + "] Thanks for Paying Dues!", 5);
         setHtml(true);
         this.firstName = firstName;
         this.lastName = lastName;
