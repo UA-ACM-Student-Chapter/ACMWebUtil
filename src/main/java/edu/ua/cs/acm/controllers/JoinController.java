@@ -82,13 +82,13 @@ public class JoinController {
             return commonService.createResponse(message.getEmail() + " is already a member", response);
         }
         if (!addMemberToDb(message)) {
-            return commonService.createResponse("The member could not be saved. Email acm-off@listserv.ua.edu for help.", response);
+            return commonService.createResponse("The member could not be saved. Email " + System.getenv("OFFICERS_EMAIL") + " for help.", response);
         }
         if (!sendWelcomeEmail(message)) {
-            return commonService.createResponse("There was an error sending the welcome email. Email acm-off@listserv.ua.edu for help.", response);
+            return commonService.createResponse("There was an error sending the welcome email. Email " + System.getenv("OFFICERS_EMAIL") + " for help.", response);
         }
         if (!sendListservAddCommand(message)) {
-            return commonService.createResponse("There was an error adding the member to the mailing list. Email acm-off@listserv.ua.edu for help.", response);
+            return commonService.createResponse("There was an error adding the member to the mailing list. Email " + System.getenv("OFFICERS_EMAIL") + " for help.", response);
         }
         response.put("success", true);
         return commonService.createResponse("", response);

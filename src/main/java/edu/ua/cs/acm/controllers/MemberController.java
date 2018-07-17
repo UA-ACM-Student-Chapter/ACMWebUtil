@@ -85,7 +85,7 @@ public class MemberController {
         response.put("success", false);
         Semester currentSemester = semesterService.getCurrentSemester();
         if (currentSemester == null) {
-            return commonService.createResponse("There is no active semester to pay for right now. Contact acm-off@listserv.ua.edu for questions.", response);
+            return commonService.createResponse("There is no active semester to pay for right now. Contact " + System.getenv("OFFICERS_EMAIL") + " for questions.", response);
         }
         Member member = memberService.getByCrimsonEmail(message.getEmail());
         if (member == null) {
