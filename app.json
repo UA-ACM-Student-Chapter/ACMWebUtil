@@ -35,6 +35,9 @@
     "EMAIL_SIGNATURE": {
       "description": "The line to use at the end of email communications. E.g., 'The UA ACM Exec Board'"
     },
+    "PAYMENTS_INSTANCE_NAME": {
+      "description": "The app name given to the ACM Web Util instance you set up in Heroku. E.g., 'ua-acm-web-payments'"
+    },
     "SLACK_INVITE_LINK": {
       "description": "The Slack link to use in the invitation email. E.g., 'https://join.slack.com/...'"
     },

@@ -146,7 +146,7 @@ public class MemberController {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        String url = "https://ua-acm-web-payments.herokuapp.com/validate";
+        String url = "https://" + System.getenv("PAYMENTS_INSTANCE_NAME") + ".herokuapp.com/validate";
         String requestJson = "{\"id\":\"" + message.getPurchaseID() + "\", \"email\":\"" + message.getEmail() + "\"}";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
