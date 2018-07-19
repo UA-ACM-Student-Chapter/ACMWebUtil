@@ -34,6 +34,7 @@ public class JoinEmailMessage extends DirectEmailMessage {
         model.put("slackInviteLink", System.getenv("SLACK_INVITE_LINK"));
         model.put("slackTeamName", System.getenv("SLACK_TEAM_NAME"));
         model.put("officersEmail", System.getenv("OFFICERS_EMAIL"));
+        model.put("emailSignature", System.getenv("EMAIL_SIGNATURE"));
 
         return renderTemplate("join.html", model);
     }
