@@ -60,6 +60,14 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public List<Member> paidMembers(Semester semester) {
+        if (semester != null) {
+            return memberRepository.paidForSemester(semester.getId());
+        }
+        return null;
+    }
+
+    @Override
     public List<Member> allMembers() {
         return memberRepository.allMembers();
     }

@@ -17,6 +17,10 @@ public interface MemberRepository extends CrudRepository <Member, Integer> {
 
     @Query(value = "SELECT * FROM Member WHERE member_id NOT IN (SELECT member_id FROM MemberSemesterLink WHERE semester_id = ?1)", nativeQuery = true)
     List<Member> unpaidForSemester(int semesterId);
+
+    @Query(value = "SELECT * FROM Member WHERE member_id IN (SELECT member_id FROM MemberSemesterLink WHERE semester_id = ?1)", nativeQuery = true)
+    List<Member> paidForSemester(int semesterId);
+
     @Query(value = "SELECT * FROM Member", nativeQuery = true)
     List <Member> allMembers();
 

@@ -66,6 +66,22 @@ public class MemberController {
         return commonService.createResponse("Wrong secret key", response);
     }
 
+    @GetMapping("/paid")
+    public ResponseEntity<Object> paidMembers(@RequestHeader String secretKey) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        if (commonService.validateSecret(secretKey)) {
+            List<Member> paidMembers = memberService.paidMembers(semesterService.getCurrentSemester());
+            if (paidMembers != null) {
+                response.put("paid", paidMembers);
+                response.put("success", true);
+                return commonService.createResponse("", response);
+            }
+            return commonService.createResponse("There is no active semester, so no member is considered paid", response);
+        }
+        return commonService.createResponse("Wrong secret key", response);
+    }
+
     @GetMapping("/all")
     public ResponseEntity<Object> allMembers(@RequestHeader String secretKey) {
         Map<String, Object> response = new HashMap<>();
