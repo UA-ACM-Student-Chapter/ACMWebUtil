@@ -99,49 +99,52 @@ public class SemesterController {
     public ResponseEntity<Object> generateReport(@RequestHeader String secretKey) {
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
-        Semester currentSemester;
-        try {
-            currentSemester = semesterService.getCurrentSemester();
-            response.put("semester", currentSemester);
+        if (commonService.validateSecret(secretKey)) {
+            Semester currentSemester;
+            try {
+                currentSemester = semesterService.getCurrentSemester();
+                response.put("semester", currentSemester);
+            }
+            catch (Exception ex) {
+                return commonService.createResponse("Could not get the current semester", response);
+            }
+            List<Member> paidMembers;
+            try {
+                paidMembers = memberService.paidMembers(currentSemester);
+                response.put("paid", paidMembers);
+            }
+            catch (Exception ex) {
+                return commonService.createResponse("Could not get the list of paid members for the semester", response);
+            }
+            List<Member> unpaidMembers;
+            try {
+                unpaidMembers = memberService.unpaidMembers(currentSemester);
+                response.put("unpaid", unpaidMembers);
+            }
+            catch (Exception ex) {
+                return commonService.createResponse("Could not get the list of unpaid members for the semester", response);
+            }
+            response.put("semesterName", System.getenv("CURRENT_SEMESTER_NAME"));
+            Map<String, Object> shirtsNeeded = new HashMap<>();
+            int xsCount = (int) paidMembers.stream().filter(member -> member.getShirtSize().equals("XS")).count();
+            shirtsNeeded.put("XS", xsCount);
+            int sCount = (int) paidMembers.stream().filter(member -> member.getShirtSize().equals("S")).count();
+            shirtsNeeded.put("S", sCount);
+            int mCount = (int) paidMembers.stream().filter(member -> member.getShirtSize().equals("M")).count();
+            shirtsNeeded.put("M", mCount);
+            int lCount = (int) paidMembers.stream().filter(member -> member.getShirtSize().equals("L")).count();
+            shirtsNeeded.put("L", lCount);
+            int xlCount = (int) paidMembers.stream().filter(member -> member.getShirtSize().equals("XL")).count();
+            shirtsNeeded.put("XL", xlCount);
+            int xxlCount = (int) paidMembers.stream().filter(member -> member.getShirtSize().equals("XXL")).count();
+            shirtsNeeded.put("XXL", xxlCount);
+            int xxxlCount = (int) paidMembers.stream().filter(member -> member.getShirtSize().equals("XXXL")).count();
+            shirtsNeeded.put("XXXL", xxxlCount);
+            response.put("shirtsNeeded", shirtsNeeded);
+            response.put("success", true);
+            return commonService.createResponse("", response);
         }
-        catch (Exception ex) {
-            return commonService.createResponse("Could not get the current semester", response);
-        }
-        List<Member> paidMembers;
-        try {
-            paidMembers = memberService.paidMembers(currentSemester);
-            response.put("paid", paidMembers);
-        }
-        catch (Exception ex) {
-            return commonService.createResponse("Could not get the list of paid members for the semester", response);
-        }
-        List<Member> unpaidMembers;
-        try {
-            unpaidMembers = memberService.unpaidMembers(currentSemester);
-            response.put("unpaid", unpaidMembers);
-        }
-        catch (Exception ex) {
-            return commonService.createResponse("Could not get the list of unpaid members for the semester", response);
-        }
-        response.put("semesterName", System.getenv("CURRENT_SEMESTER_NAME"));
-        Map<String, Object> shirtsNeeded = new HashMap<>();
-        int xsCount = (int) paidMembers.stream().filter(member -> member.getShirtSize().equals("XS")).count();
-        shirtsNeeded.put("XS", xsCount);
-        int sCount = (int) paidMembers.stream().filter(member -> member.getShirtSize().equals("S")).count();
-        shirtsNeeded.put("S", sCount);
-        int mCount = (int) paidMembers.stream().filter(member -> member.getShirtSize().equals("M")).count();
-        shirtsNeeded.put("M", mCount);
-        int lCount = (int) paidMembers.stream().filter(member -> member.getShirtSize().equals("L")).count();
-        shirtsNeeded.put("L", lCount);
-        int xlCount = (int) paidMembers.stream().filter(member -> member.getShirtSize().equals("XL")).count();
-        shirtsNeeded.put("XL", xlCount);
-        int xxlCount = (int) paidMembers.stream().filter(member -> member.getShirtSize().equals("XXL")).count();
-        shirtsNeeded.put("XXL", xxlCount);
-        int xxxlCount = (int) paidMembers.stream().filter(member -> member.getShirtSize().equals("XXXL")).count();
-        shirtsNeeded.put("XXXL", xxxlCount);
-        response.put("shirtsNeeded", shirtsNeeded);
-        response.put("success", true);
-        return commonService.createResponse("", response);
+        return commonService.createResponse("Bad secret key", response);
     }
 
 }
