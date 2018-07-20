@@ -21,11 +21,7 @@ import org.springframework.http.*;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Calendar;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Created by jzarobsky on 11/21/17.
@@ -96,6 +92,40 @@ public class SemesterController {
             return commonService.createResponse("", response);
         }
         return commonService.createResponse("Bad secret key", response);
+    }
+
+    @CrossOrigin
+    @GetMapping("/report")
+    public ResponseEntity<Object> generateReport(@RequestHeader String secretKey) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        Semester currentSemester;
+        try {
+            currentSemester = semesterService.getCurrentSemester();
+            response.put("semester", currentSemester);
+        }
+        catch (Exception ex) {
+            return commonService.createResponse("Could not get the current semester", response);
+        }
+        List<Member> paidMembers;
+        try {
+            paidMembers = memberService.paidMembers(currentSemester);
+            response.put("paid", paidMembers);
+        }
+        catch (Exception ex) {
+            return commonService.createResponse("Could not get the list of paid members for the semester", response);
+        }
+        List<Member> unpaidMembers;
+        try {
+            unpaidMembers = memberService.unpaidMembers(currentSemester);
+            response.put("unpaid", unpaidMembers);
+        }
+        catch (Exception ex) {
+            return commonService.createResponse("Could not get the list of unpaid members for the semester", response);
+        }
+        response.put("semesterName", System.getenv("CURRENT_SEMESTER_NAME"));
+        response.put("success", true);
+        return commonService.createResponse("", response);
     }
 
 }
