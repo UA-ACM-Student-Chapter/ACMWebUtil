@@ -216,18 +216,22 @@ public class MemberController {
     }
 
     @PostMapping("/emailunsubscribe")
-    public boolean listservUnsubscribe(@RequestBody String email) {
+    public ResponseEntity<Object> listservUnsubscribe(@RequestBody String email) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+
         Member user = memberService.getByCrimsonEmail(email);
         if (user != null) {
             try {
                 emailService.sendMessage(new ListservUnsubscribe(email));
             } catch (Exception e) {
                 LOG.error(e.getMessage());
-                return false;
+                return commonService.createResponse("Failed to unsubscribe.", response);
             }
-            return true;
+            response.put("success", true);
+            return commonService.createResponse("", response);
         } else {
-            return false;
+            return commonService.createResponse("Failed to find a member with the given email.", response);
         }
     }
 }
