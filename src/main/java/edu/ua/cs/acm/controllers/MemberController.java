@@ -2,6 +2,8 @@ package edu.ua.cs.acm.controllers;
 
 import edu.ua.cs.acm.domain.Member;
 import edu.ua.cs.acm.domain.Semester;
+import edu.ua.cs.acm.email.ListservCommand;
+import edu.ua.cs.acm.email.ListservUnsubscribe;
 import edu.ua.cs.acm.messages.IsPaidMessage;
 import edu.ua.cs.acm.messages.UpdateShirtSizeMessage;
 import edu.ua.cs.acm.messages.PayForSemesterMessage;
@@ -10,6 +12,7 @@ import edu.ua.cs.acm.services.MemberService;
 import edu.ua.cs.acm.services.SemesterService;
 import edu.ua.cs.acm.services.EmailService;
 import edu.ua.cs.acm.email.PaymentConfirmationEmailMessage;
+import edu.ua.cs.acm.services.impl.MemberServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -212,4 +215,19 @@ public class MemberController {
         return commonService.createResponse("The provided payment information was not determined to be valid.", response);
     }
 
+    @PostMapping("/emailunsubscribe")
+    public boolean listservUnsubscribe(@RequestBody String email) {
+        Member user = memberService.getByCrimsonEmail(email);
+        if (user != null) {
+            try {
+                emailService.sendMessage(new ListservUnsubscribe(email));
+            } catch (Exception e) {
+                LOG.error(e.getMessage());
+                return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
