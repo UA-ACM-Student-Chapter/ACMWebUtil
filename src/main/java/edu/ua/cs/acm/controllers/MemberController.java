@@ -2,9 +2,9 @@ package edu.ua.cs.acm.controllers;
 
 import edu.ua.cs.acm.domain.Member;
 import edu.ua.cs.acm.domain.Semester;
-import edu.ua.cs.acm.email.ListservCommand;
 import edu.ua.cs.acm.email.ListservUnsubscribe;
 import edu.ua.cs.acm.messages.IsPaidMessage;
+import edu.ua.cs.acm.messages.UnsubscribeMessage;
 import edu.ua.cs.acm.messages.UpdateShirtSizeMessage;
 import edu.ua.cs.acm.messages.PayForSemesterMessage;
 import edu.ua.cs.acm.services.CommonService;
@@ -12,7 +12,6 @@ import edu.ua.cs.acm.services.MemberService;
 import edu.ua.cs.acm.services.SemesterService;
 import edu.ua.cs.acm.services.EmailService;
 import edu.ua.cs.acm.email.PaymentConfirmationEmailMessage;
-import edu.ua.cs.acm.services.impl.MemberServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,7 +172,7 @@ public class MemberController {
         HttpEntity<String> entity = new HttpEntity<>(requestJson,headers);
         String validateResponse = restTemplate.postForObject(url, entity, String.class);
 
-        if (validateResponse != "no" && validateResponse.equals(message.getDatePaid())) {
+        if (!validateResponse.equals("no") && validateResponse.equals(message.getDatePaid())) {
 
             Member payingMember = memberService.getByCrimsonEmail(message.getEmail());
             int semesterId = semesterService.currentSemesterId();
@@ -216,14 +215,14 @@ public class MemberController {
     }
 
     @PostMapping("/emailunsubscribe")
-    public ResponseEntity<Object> listservUnsubscribe(@RequestBody String email) {
+    public ResponseEntity<Object> listservUnsubscribe(@RequestBody UnsubscribeMessage email) {
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
 
-        Member user = memberService.getByCrimsonEmail(email);
+        Member user = memberService.getByCrimsonEmail(email.getEmail());
         if (user != null) {
             try {
-                emailService.sendMessage(new ListservUnsubscribe(email));
+                emailService.sendMessage(new ListservUnsubscribe(email.getEmail()));
             } catch (Exception e) {
                 LOG.error(e.getMessage());
                 return commonService.createResponse("Failed to unsubscribe.", response);
