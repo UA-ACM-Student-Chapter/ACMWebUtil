@@ -93,6 +93,9 @@ public class Semester implements Serializable {
         this.endDate = endDate;
     }
 
+    public LocalDateTime getDueDate() { return dueDate; }
+
+    public void setDueDate(LocalDateTime dueDate) { this.dueDate = dueDate; }
 
     public Set<Member> getMembers() {
         return members;

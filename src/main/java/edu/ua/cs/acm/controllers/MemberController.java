@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -102,6 +103,9 @@ public class MemberController {
         Semester currentSemester = semesterService.getCurrentSemester();
         if (currentSemester == null) {
             return commonService.createResponse("There is no active semester to pay for right now. Contact " + System.getenv("OFFICERS_EMAIL") + " for questions.", response);
+        }
+        if (currentSemester.getDueDate().isBefore(LocalDateTime.now())){
+            return commonService.createResponse("It is past the due date to pay for this semester.", response);
         }
         Member member = memberService.getByCrimsonEmail(message.getEmail());
         if (member == null) {
