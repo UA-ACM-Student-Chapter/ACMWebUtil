@@ -138,7 +138,13 @@ public class MemberController {
     public Object memberIsPaid(@RequestBody IsPaidMessage message) {
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
+        if (message.getSecretKey() == null){
+            return commonService.createResponse("Missing a secret key", response);
+        }
         if (commonService.validateSecret(message.getSecretKey())) {
+            if (semesterService.getCurrentSemester() == null) {
+                return commonService.createResponse("There is no current semester.", response);
+            }
             Member member = memberService.getByCrimsonEmail(message.getEmail());
             boolean memberHasPaid;
 
